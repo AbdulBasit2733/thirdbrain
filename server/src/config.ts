@@ -1,0 +1,1 @@
+export const USER_JWT_SECRET = "ndhcydhshiueh1298431dh7d73"

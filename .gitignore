@@ -1,0 +1,116 @@
+# Node.js
+server/node_modules/
+thirdbrain/node_modules/
+.env
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and Cache
+thirdbrain/build/
+server/.next/
+*.cache/
+dist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.iml
+
+# Git
+.git/
+# Node.js
+server/node_modules/
+thirdbrain/node_modules/
+.env
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and Cache
+thirdbrain/build/
+server/.next/
+*.cache/
+dist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.iml
+
+# Git
+.git/
+# Node.js
+server/node_modules/
+thirdbrain/node_modules/
+.env
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and Cache
+thirdbrain/build/
+server/.next/
+*.cache/
+dist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.iml
+
+# Git
+.git/
+# Node.js
+server/node_modules/
+thirdbrain/node_modules/
+.env
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and Cache
+thirdbrain/build/
+server/.next/
+*.cache/
+dist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.iml
+
+# Git
+.git/
