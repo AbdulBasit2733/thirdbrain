@@ -78,6 +78,7 @@ UserRouter.post(
 UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
   try {
     const bodyData = req.body;
+    
 
     // Check if User Exists
     const user = await UserModel.findOne({ username: bodyData.username });
@@ -120,6 +121,9 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
       .json({
         success: true,
         message: "Logged in successfully",
+        user:{
+          username:user.username
+        }
       });
   } catch (error) {
     console.error(error);

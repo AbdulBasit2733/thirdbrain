@@ -26,7 +26,7 @@ ContentRouter.get(
       }
       res.status(200).json({
         success: true,
-        data: contents,
+        contents: contents,
       });
     } catch (error) {
       console.log(error);
@@ -45,15 +45,17 @@ ContentRouter.post(
     try {
       const bodyData = req.body;
       //@ts-ignore
-      const userId = req.user;
+      const userId = req.userId;
+      
       await ContentModel.create({
         title: bodyData.title,
         link: bodyData.link,
+        type:bodyData.type,
         tags: bodyData.tags,
         userId: userId,
       });
       res.status(200).json({
-        success: false,
+        success: true,
         message: "Content Created Successfully",
       });
     } catch (error) {

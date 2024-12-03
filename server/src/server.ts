@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import cors from 'cors'
+import cors from "cors";
 import UserRouter from "./Routes/UserRoute";
 import dotenv from "dotenv";
 import ContentRouter from "./Routes/ContentRoute";
@@ -11,12 +11,16 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
-
-app.use('/api/v1/users', UserRouter)
-app.use('/api/v1/content', ContentRouter)
+app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/content", ContentRouter);
 
 async function Main() {
   try {
@@ -27,12 +31,12 @@ async function Main() {
       .then(() => {
         console.log("Mongodb database is connected");
         app.listen(3000, () => {
-            console.log(`App is running on http://localhost:3000`);
-        })
+          console.log(`App is running on http://localhost:3000`);
+        });
       });
   } catch (error) {
     console.log(error);
   }
 }
 
-Main()
+Main();

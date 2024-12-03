@@ -1,39 +1,38 @@
-import React from "react";
-import Button from "./components/Button";
-import ShareIcon from "./Icons/ShareIcon";
-import PlusIcon from "./Icons/PlusIcon";
-import Card from "./components/Card";
+import React, { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import AuthLayout from "./components/Auth/AuthLayout";
+import Signin from "./pages/auth/Signin";
+import Signup from "./pages/auth/Signup";
+import Dasboard from "./pages/Dashboard/Dasboard";
 
 const App = () => {
+  const [authenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  console.log("auth", authenticated);
+  console.log("user", user);
+
   return (
-    <div className="w-full p-5">
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="text-3xl text-indigo-600 font-bold tracking-widest">Third Brain</h1>
-        <div className="flex gap-3 items-center">
-          <Button
-            variant="primary"
-            text={"Add Content"}
-            startIcon={<PlusIcon />}
+    <div>
+      <Routes>
+        <Route path="/auth" element={<AuthLayout />}>
+          <Route
+            path="signin"
+            element={
+              <Signin
+                isAuthenticated={authenticated}
+                user={user}
+                setUser={setUser}
+                setIsAuthenticated={setIsAuthenticated}
+              />
+            }
           />
-          <Button
-            variant="secondary"
-            text={"Share Brain"}
-            startIcon={<ShareIcon />}
+          <Route
+            path="signup"
+            element={<Signup isAuthenticated={authenticated} user={user} />}
           />
-        </div>
-      </div>
-      <div className=" flex gap-3">
-        <Card
-          type="twitter"
-          title={"First Tweet"}
-          link={"https://twitter.com/Saran2302/status/1862584192191664419"}
-        />
-        <Card
-          type="youtube"
-          title={"First Video"}
-          link={"https://www.youtube.com/embed/ofHGE-85EIA?si=H5_0WjO7_Fy9dHOv"}
-        />
-      </div>
+        </Route>
+        <Route path="/dashboard" element={<Dasboard />} />
+      </Routes>
     </div>
   );
 };

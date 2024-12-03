@@ -3,12 +3,15 @@ import ShareIcon from "../Icons/ShareIcon";
 import DeleteIcon from "../Icons/DeleteIcon";
 
 interface CardProps {
-  title: String;
-  link: String;
+  title: string;
+  link: string;
   type: "twitter" | "youtube";
 }
 
 const Card = ({ title, link, type }: CardProps) => {
+
+  const normalizedLink = link.replace("x.com", "twitter.com");
+  
   return (
     <div>
       <div className="shadow bg-white rounded-md border-[1.5px] border-gray-300  p-4 max-w-72 min-h-48 min-w-72">
@@ -18,7 +21,7 @@ const Card = ({ title, link, type }: CardProps) => {
             <h1 className="text-black font-semibold text-sm">{title}</h1>
           </div>
           <div className="flex gap-2 items-center text-gray-500">
-            <a href={link.toString()} target="_blank" className="cursor-pointer">
+            <a href={link} target="_blank" className="cursor-pointer">
               <ShareIcon />
             </a>
             <DeleteIcon />
@@ -36,9 +39,9 @@ const Card = ({ title, link, type }: CardProps) => {
               allowFullScreen
             ></iframe>
           )}
-          {type === "twitter" && (
+          {type === "twitter" && link && (
             <blockquote className="twitter-tweet">
-              <a href={link}></a>
+              <a href={normalizedLink}></a>
             </blockquote>
           )}
         </div>
