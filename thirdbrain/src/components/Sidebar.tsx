@@ -3,6 +3,7 @@ import SidebarItem from "./SidebarItem";
 import YoutubeIcon from "../Icons/YoutubeIcon";
 import TwitterIcon from "../Icons/TwitterIcon";
 import Logo from "../Icons/Logo";
+import FolderIcon from "../Icons/FolderIcon";
 
 const Sidebar = () => {
   return (
@@ -14,6 +15,8 @@ const Sidebar = () => {
       <div className="pt-10 space-y-3">
         <SidebarItem text="Twitter" icon={<TwitterIcon />} />
         <SidebarItem text="Youtube" icon={<YoutubeIcon />} />
+        <SidebarItem text="All Contents" icon={<FolderIcon />} />
+        <SidebarItem text="My Contents" icon={<FolderIcon />} />
       </div>
     </div>
   );

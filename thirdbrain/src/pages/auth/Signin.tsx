@@ -4,41 +4,27 @@ import Button from "../../components/Button";
 import axios from "axios";
 import BACKEND_URL from "../../../config";
 import { toast } from "react-toastify";
-import { Link, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-const Signin = ({ isAuthenticated, user, setIsAuthenticated, setUser }) => {
+import { Link } from "react-router-dom";
+import { LoginUser } from "../../store/auth-slice";
+import { useDispatch } from "react-redux";
+const Signin = () => {
 
-  const navigate = useNavigate()
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
-
+  const dispatch = useDispatch();
   const handleSignin = async () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
-    const response = await axios.post(
-      `${BACKEND_URL}/api/v1/users/login`,
-      {
-        username,
-        password,
-      },
-      { withCredentials: true }
-    );
-    if (response.data?.success) {
-      toast.success(response?.data?.message);
-      setIsAuthenticated(true);
-      setUser(response.data.user);
-      usernameRef.current.value = null;
-      passwordRef.current.value = null;
-      navigate('/dashboard')
-    } else {
-      toast.error(response?.data?.message);
-      setIsAuthenticated(false);
-      setUser(null);
-    }
+    dispatch(LoginUser({ username, password })).then((data) => {
+      if (data.payload.success) {
+        toast.success(data.payload.message);
+      } else {
+        toast.error(data.payload.message);
+      }
+    });
   };
   return (
-    <>
-      <div>
+      <div className="shadow min-w-60 w-72 p-5 bg-white rounded-lg">
         <h1 className=" text-xl font-bold text-center">Signin</h1>
         <div className="my-5 min-w-48 space-y-5">
           <Input refs={usernameRef} placeholder="Username" />
@@ -60,7 +46,6 @@ const Signin = ({ isAuthenticated, user, setIsAuthenticated, setUser }) => {
           </Link>
         </div>
       </div>
-    </>
   );
 };
 

@@ -3,9 +3,11 @@ import UserModel from "../Models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import z from "zod";
+import { AuthMiddleware } from "../Middleware/AuthMiddleware";
 
 const UserRouter: Router = express.Router();
-const USER_JWT_SECRET = process.env.USER_JWT_SECRET || "ndhcydhshiueh1298431dh7d73";
+const USER_JWT_SECRET =
+  process.env.USER_JWT_SECRET || "ndhcydhshiueh1298431dh7d73";
 
 // Registration Route
 UserRouter.post(
@@ -78,7 +80,6 @@ UserRouter.post(
 UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
   try {
     const bodyData = req.body;
-    
 
     // Check if User Exists
     const user = await UserModel.findOne({ username: bodyData.username });
@@ -121,9 +122,9 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
       .json({
         success: true,
         message: "Logged in successfully",
-        user:{
-          username:user.username
-        }
+        user: {
+          username: user.username,
+        },
       });
   } catch (error) {
     console.error(error);
@@ -134,5 +135,21 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
+UserRouter.post("/logout", async (req, res) => {
+  res.clearCookie("token").json({
+    success: true,
+    message: "Logged Out Successfully",
+  });
+});
+
+UserRouter.get("/check-auth", AuthMiddleware, async (req, res) => {
+  //@ts-ignore
+  const user = req.user;
+  res.status(200).json({
+    success: true,
+    message: "Authenticated user!",
+    user,
+  });
+});
 
 export default UserRouter;

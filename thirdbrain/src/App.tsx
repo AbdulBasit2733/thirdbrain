@@ -1,38 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthLayout from "./components/Auth/AuthLayout";
 import Signin from "./pages/auth/Signin";
 import Signup from "./pages/auth/Signup";
-import Dasboard from "./pages/Dashboard/Dasboard";
+import Dashboard from "./pages/Dashboard/Dasboard"; // Fixed typo in "Dashboard"
+import CheckAuth from "./components/Auth/CheckAuth";
+import { useSelector, useDispatch } from "react-redux";
+import { CheckAuthentication } from "./store/auth-slice";
 
 const App = () => {
-  const [authenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
-  console.log("auth", authenticated);
-  console.log("user", user);
+  const dispatch = useDispatch();
+  const { isAuthenticated, isLoading, error } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(CheckAuthentication());
+  }, [dispatch]);
 
   return (
-    <div>
-      <Routes>
-        <Route path="/auth" element={<AuthLayout />}>
+    <div className="font-poppins">
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <Routes>
+          {/* Authentication routes */}
           <Route
-            path="signin"
+            path="/auth"
             element={
-              <Signin
-                isAuthenticated={authenticated}
-                user={user}
-                setUser={setUser}
-                setIsAuthenticated={setIsAuthenticated}
-              />
+              <CheckAuth isAuthenticated={isAuthenticated}>
+                <AuthLayout />
+              </CheckAuth>
+            }
+          >
+            <Route path="signin" element={<Signin />} />
+            <Route path="signup" element={<Signup />} />
+          </Route>
+
+          {/* Dashboard route */}
+          <Route
+            path="/"
+            element={
+              <CheckAuth isAuthenticated={isAuthenticated}>
+                <Dashboard />
+              </CheckAuth>
             }
           />
-          <Route
-            path="signup"
-            element={<Signup isAuthenticated={authenticated} user={user} />}
-          />
-        </Route>
-        <Route path="/dashboard" element={<Dasboard />} />
-      </Routes>
+        </Routes>
+      )}
     </div>
   );
 };

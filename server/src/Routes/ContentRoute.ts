@@ -8,13 +8,40 @@ import UserModel from "../Models/User";
 const ContentRouter: Router = express.Router();
 
 ContentRouter.get(
-  "/content",
+  "/all-contents",
+  AuthMiddleware,
+  async (req: Request, res: Response): Promise<any> => {
+    try {
+      // //@ts-ignore
+      // const user = req.user;
+      const contents = await ContentModel.find().populate("userId", "username");
+      if (contents && contents.length === 0) {
+        return res.status(200).json({
+          success: false,
+          message: "Contents Not Found",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        contents: contents,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+      });
+    }
+  }
+);
+ContentRouter.get(
+  "/user-content",
   AuthMiddleware,
   async (req: Request, res: Response): Promise<any> => {
     try {
       //@ts-ignore
-      const userId = req.userId;
-      const contents = await ContentModel.find({ userId: userId }).populate(
+      const user = req.user;
+      const contents = await ContentModel.find({ userId: user._id }).populate(
         "userId",
         "username"
       );
@@ -45,14 +72,14 @@ ContentRouter.post(
     try {
       const bodyData = req.body;
       //@ts-ignore
-      const userId = req.userId;
-      
+      const user = req.user;
+
       await ContentModel.create({
         title: bodyData.title,
         link: bodyData.link,
-        type:bodyData.type,
+        type: bodyData.type,
         tags: bodyData.tags,
-        userId: userId,
+        userId: user._id,
       });
       res.status(200).json({
         success: true,
@@ -74,12 +101,12 @@ ContentRouter.delete(
   async (req: Request, res: Response): Promise<any> => {
     try {
       //@ts-ignore
-      const userId = req.userId;
+      const user = req.user;
       const { contentId } = req.body;
 
       const deletedContent = await ContentModel.findByIdAndDelete({
         _id: contentId,
-        userId: userId,
+        userId: user._id,
       });
       if (!deletedContent) {
         return res.status(400).json({
@@ -106,17 +133,23 @@ ContentRouter.put(
   async (req: Request, res: Response): Promise<any> => {
     try {
       //@ts-ignore
-      const userId = req.userId;
+      const user = req.user;
       const bodyData = req.body;
 
       const content = await ContentModel.findByIdAndUpdate(
-        { _id: bodyData.contentId, userId: userId },
+        { _id: bodyData.contentId, userId: user._id },
         {
           title: bodyData.title,
+          type: bodyData.type,
           tags: bodyData.tags,
           link: bodyData.link,
         }
       );
+
+      res.status(200).json({
+        success: true,
+        message: "Edited Content Successfully",
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -135,12 +168,12 @@ ContentRouter.post(
     if (share) {
       const existingLink = await LinkModel.findOne({
         //@ts-ignore
-        userId:req.userId
-      })
-      if(existingLink){
+        userId: req.userId,
+      });
+      if (existingLink) {
         res.status(200).json({
-            hash:existingLink.hash
-        })
+          hash: existingLink.hash,
+        });
         return;
       }
       const hash = RandomLink(10);

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "build":"tsc -b",
-    "start":"node dist/server.js",
+    "build": "tsc -b",
+    "start": "node dist/server.js",
     "dev": "npm run build && npm run start"
   },
   "keywords": [],
@@ -21,7 +21,13 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.7",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
-    "mongoose": "^8.8.3"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.3",
+    "zod": "^3.23.8"
   }
 }
