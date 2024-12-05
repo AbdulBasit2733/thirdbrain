@@ -1,6 +1,6 @@
 import IconStyles from "./IconsStyles"
 
- const ShareIcon = ({size}:IconStyles) => {
+ const ShareIcon = () => {
     return (
         <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -9,7 +9,7 @@ import IconStyles from "./IconsStyles"
         strokeWidth="1.5"
         stroke="currentColor"
         // className={`size-${size}`}
-        className="size-5"
+        className="size-6"
       >
         <path
           strokeLinecap="round"

@@ -1,6 +1,6 @@
 import IconStyles from "./IconsStyles";
 
-const DeleteIcon = ({ size }: IconStyles) => {
+const DeleteIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -9,7 +9,7 @@ const DeleteIcon = ({ size }: IconStyles) => {
       strokeWidth="1.5"
       stroke="currentColor"
       //   className={`size-${size}`}
-      className="size-5"
+      className="size-6"
       color="red"
     >
       <path

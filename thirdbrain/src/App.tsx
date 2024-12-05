@@ -3,10 +3,14 @@ import { Route, Routes } from "react-router-dom";
 import AuthLayout from "./components/Auth/AuthLayout";
 import Signin from "./pages/auth/Signin";
 import Signup from "./pages/auth/Signup";
-import Dashboard from "./pages/Dashboard/Dasboard"; // Fixed typo in "Dashboard"
 import CheckAuth from "./components/Auth/CheckAuth";
 import { useSelector, useDispatch } from "react-redux";
 import { CheckAuthentication } from "./store/auth-slice";
+
+import Dasboard from "./pages/Dashboard/Dasboard";
+import Main from "./components/Main";
+import AllContents from "./pages/AllContents";
+import MyContents from "./pages/MyContents";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -42,10 +46,15 @@ const App = () => {
             path="/"
             element={
               <CheckAuth isAuthenticated={isAuthenticated}>
-                <Dashboard />
+                <Dasboard/>
               </CheckAuth>
             }
-          />
+          >
+            <Route path="/" element={<Main />}/>
+            {/* <Route path="all-contents" element={<AllContents />}/> */}
+            <Route path="my-contents" element={<MyContents />}/>
+          </Route>
+
         </Routes>
       )}
     </div>

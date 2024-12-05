@@ -8,8 +8,7 @@ import UserModel from "../Models/User";
 const ContentRouter: Router = express.Router();
 
 ContentRouter.get(
-  "/all-contents",
-  AuthMiddleware,
+  "/all-contents",AuthMiddleware,
   async (req: Request, res: Response): Promise<any> => {
     try {
       // //@ts-ignore
@@ -35,7 +34,7 @@ ContentRouter.get(
   }
 );
 ContentRouter.get(
-  "/user-content",
+  "/user-contents",
   AuthMiddleware,
   async (req: Request, res: Response): Promise<any> => {
     try {
@@ -102,10 +101,11 @@ ContentRouter.delete(
     try {
       //@ts-ignore
       const user = req.user;
-      const { contentId } = req.body;
+      const data = req.body;
+      
 
       const deletedContent = await ContentModel.findByIdAndDelete({
-        _id: contentId,
+        _id: data.contentId,
         userId: user._id,
       });
       if (!deletedContent) {

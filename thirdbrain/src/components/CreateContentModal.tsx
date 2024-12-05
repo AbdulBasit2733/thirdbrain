@@ -37,7 +37,8 @@ const CreateContentModal = ({ open, onClose }) => {
         <div className="bg-gray-50 h-screen w-screen fixed top-0 left-0 flex justify-center items-center">
           <div className="bg-white flex flex-col justify-center rounded-md shadow-2xl w-96">
             <span className="p-4 rounded-md w-full">
-              <div className="flex justify-end">
+              <div className="flex mb-5 items-center justify-between">
+                <h1 className="text-xl font-semibold">Create Content</h1>
                 <button
                   onClick={onClose}
                   className="cursor-pointer hover:bg-indigo-100 transition-all p-2 rounded-lg"

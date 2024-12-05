@@ -1,11 +1,12 @@
 import React, { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
-const SidebarItem = ({ text, icon }: { text: string; icon: ReactElement }) => {
+const SidebarItem = ({ text, icon, link }: { text: string; icon: ReactElement, link:string }) => {
   return (
-    <div className="flex items-center gap-5 bg-slate-100 hover:bg-slate-300 transition-all duration-300 text-sm text-indigo-600 px-3 py-2 rounded-md">
+    <Link to={link} className="flex items-center gap-5 bg-slate-100 hover:bg-slate-300 transition-all duration-300 text-sm text-indigo-600 px-3 py-2 rounded-md">
       {icon}
       <h1 className="text-black font-semibold">{text}</h1>
-    </div>
+    </Link>
   );
 };
 

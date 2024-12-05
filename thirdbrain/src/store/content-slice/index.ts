@@ -32,103 +32,166 @@ const initialState: InitialStateProps = {
   contents: null,
 };
 
-export const AllContents = createAsyncThunk(
-  "/contents/all-content",
-  async () => {
-    const response = await axios.get(
-      `${BACKEND_URL}/api/v1/content/all-content`,
-      {
-        withCredentials: true,
+export const allContents = createAsyncThunk(
+  "/contents/all-contents",
+  async (_, { signal }) => {
+    const controller = new AbortController();
+    signal.addEventListener("abort", () => controller.abort());
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/api/v1/content/all-contents`,
+        {
+          withCredentials: true,
+          signal: controller.signal,
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled");
+      } else {
+        throw error;
       }
-    );
-    return response.data;
+    }
   }
 );
 export const UserContents = createAsyncThunk(
-  "/content/user-content",
-  async () => {
-    const response = await axios.get(
-      `${BACKEND_URL}/api/v1/content/user-content`,
+  "/content/user-contents",
+  async (_, { signal }) => {
+    const controller = new AbortController();
+    signal.addEventListener("abort", () => controller.abort());
+
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/api/v1/content/user-contents`,
+        {
+          withCredentials: true,
+          signal: controller.signal, // Pass the AbortController signal
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled");
+      } else {
+        throw error;
+      }
+    }
+  }
+);
+export const CreateContent = createAsyncThunk(
+  "/content/create-content",
+  async (formData) => {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/v1/content/create-content`,
+      formData,
       {
         withCredentials: true,
       }
     );
-
     return response.data;
   }
 );
-export const CreateContent = createAsyncThunk('/content/create-content', async(formData) =>{
-    const response = await axios.post(`${BACKEND_URL}/api/v1/content/create-content`, formData, {
-        withCredentials:true
-    })
+
+export const editContent = createAsyncThunk(
+  "/content/edit-content",
+  async (formData) => {
+    const response = await axios.put(
+      `${BACKEND_URL}/api/v1/content/edit`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
-} )
+  }
+);
 
-export const editContent = createAsyncThunk('/content/edit-content', async (formData) => {
-    const response  =await axios.put(`${BACKEND_URL}/api/v1/content/edit`, formData, {
-        withCredentials:true
-    })
-    return response.data
-})
-
-const deleteContent = createAsyncThunk('/content/delete', async (contentId) => {
-    const response = await axios.delete(`${BACKEND_URL}/api/v1/content/delete`, {
-        data:contentId
-    });
-    return response.data
-})
+export const deleteContent = createAsyncThunk(
+  "/content/delete",
+  async (contentId) => {
+    const response = await axios.delete(
+      `${BACKEND_URL}/api/v1/content/delete`,
+      {
+        data: {contentId},
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  }
+);
 
 const ContentSlice = createSlice({
   name: "content",
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(AllContents.pending, (state) => {
-        state.isLoading  = true;
-
-    }).addCase(AllContents.fulfilled, (state, action) => {
+    builder
+      .addCase(allContents.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(allContents.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.contents = action.payload.success ? action.payload.contents : null;
-    }).addCase(AllContents.rejected, (state) => {
-        state.isLoading = false;
-        state.contents = null;
-    }).addCase(UserContents.pending, (state) => {
-        state.isLoading  = true;
-
-    }).addCase(UserContents.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.contents = action.payload.success ? action.payload.contents : null;
-    }).addCase(UserContents.rejected, (state) => {
+        state.contents = action.payload.success
+          ? action.payload.contents
+          : null;
+      })
+      .addCase(allContents.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
-    }).addCase(CreateContent.pending, (state) => {
-        state.isLoading  = true;
-
-    }).addCase(CreateContent.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.contents = action.payload.success ? action.payload.contents : null;
-    }).addCase(CreateContent.rejected, (state ) => {
+      })
+      .addCase(UserContents.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(UserContents.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.contents = action.payload.success
+          ? action.payload.contents
+          : null;
+      })
+      .addCase(UserContents.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
-    }).addCase(editContent.pending, (state) => {
-        state.isLoading  = true;
-
-    }).addCase(editContent.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.contents = action.payload.success ? action.payload.contents : null;
-    }).addCase(editContent.rejected, (state ) => {
+      })
+      .addCase(CreateContent.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(CreateContent.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.contents = action.payload.success
+          ? action.payload.contents
+          : null;
+      })
+      .addCase(CreateContent.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
-    }).addCase(deleteContent.pending, (state) => {
-        state.isLoading  = true;
-
-    }).addCase(deleteContent.fulfilled, (state, action) => {
-        state.isLoading = false
+      })
+      .addCase(editContent.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(editContent.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.contents = action.payload.success
+          ? action.payload.contents
+          : null;
+      })
+      .addCase(editContent.rejected, (state) => {
+        state.isLoading = false;
+        state.contents = null;
+      })
+      .addCase(deleteContent.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteContent.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.contents = state.contents;
-    }).addCase(deleteContent.rejected, (state ) => {
+      })
+      .addCase(deleteContent.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
-    })
+      });
   },
 });
 

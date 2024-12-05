@@ -6,7 +6,7 @@ const useContent = () => {
   const [contents, setContent] = useState([]);
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/v1/content/content`, {
+      .get(`${BACKEND_URL}/api/v1/content/all-contents`, {
         withCredentials: true,
       })
       .then((response) => {
