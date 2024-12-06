@@ -29,6 +29,8 @@ const Header = () => {
               },
               { withCredentials: true }
             );
+            console.log(response);
+
             const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
             await window.navigator.clipboard.writeText(shareUrl);
             toast.success("Copied The Url");
@@ -41,7 +43,30 @@ const Header = () => {
         text={"Share Brain"}
         startIcon={<ShareIcon />}
       />
-      <div className="relative">
+      <Button
+        startIcon={<ProfileIcon />}
+        text={user.username}
+        variant="secondary"
+      />
+
+      <div className="px-5">
+        <Button
+          startIcon={<LogoutIcon />}
+          text={"Logout"}
+          variant="primary"
+          fullWidth={true}
+          onClick={() =>
+            dispatch(LogoutUser()).then((data) => {
+              if (data.payload.success) {
+                toast.success(data.payload.message);
+              } else {
+                toast.error(data.payload.message);
+              }
+            })
+          }
+        />
+      </div>
+      {/* <div className="relative">
         <button
           onMouseEnter={() => setDropdownOpen(!dropdownOpen)}
           onMouseLeave={() => setDropdownOpen(!dropdownOpen)}
@@ -52,7 +77,7 @@ const Header = () => {
             <div
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}
-              className="absolute bottom-[-8rem] flex flex-col items-start gap-y-2 right-0 shadow-lg bg-white rounded-md w-36 py-3"
+              className="absolute bottom-[-2rem] flex flex-col items-start gap-y-2 right-0 shadow-lg bg-white rounded-md w-36 py-3"
             >
               <Link
                 to={"/profile"}
@@ -92,7 +117,7 @@ const Header = () => {
             </div>
           )}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
