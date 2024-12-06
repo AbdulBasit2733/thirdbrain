@@ -16,12 +16,14 @@ const CreateContentModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const titleRef = useRef<HTMLInputElement>();
   const linkRef = useRef<HTMLInputElement>();
+  const tagRef = useRef<HTMLInputElement>();
   const [type, setType] = useState(ContentType.Youtube);
 
   const handleCreateContent = async () => {
     const title = titleRef.current?.value;
     const link = linkRef.current?.value;
-    dispatch(CreateContent({ title, link, type })).then((data) => {
+    const tagTitle = tagRef.current?.value;
+    dispatch(CreateContent({ title, link, type, tagTitle })).then((data) => {
       if (data.payload.success) {
         toast.success(data.payload.message);
         onClose(false);
@@ -49,6 +51,7 @@ const CreateContentModal = ({ open, onClose }) => {
               <div className="mt-3 space-y-2 mb-3">
                 <Input refs={titleRef} placeholder={"Title"} />
                 <Input refs={linkRef} placeholder={"Link"} />
+                <Input refs={tagRef} placeholder={"Tags"} />
               </div>
               <h1 className="text-lg font-semibold mb-4">Type</h1>
               <div className="flex gap-2 items-center mb-5">

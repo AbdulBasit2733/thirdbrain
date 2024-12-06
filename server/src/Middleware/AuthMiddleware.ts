@@ -9,7 +9,6 @@ export const AuthMiddleware = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Retrieve token from cookies
     const token = req.cookies?.token;
     if (!token) {
       res.status(401).json({
@@ -19,8 +18,7 @@ export const AuthMiddleware = async (
       return;
     }
 
-    // Verify token
-    const decodedData = jwt.verify(token, USER_JWT_SECRET) as { id: string }; // Add typing for decoded data
+    const decodedData = jwt.verify(token, USER_JWT_SECRET) as { id: string }; 
     if (!decodedData || !decodedData.id) {
       res.status(403).json({
         success: false,
@@ -28,8 +26,6 @@ export const AuthMiddleware = async (
       });
       return;
     }
-
-    // Fetch user from database
     const user = await UserModel.findById(decodedData.id).select("-password");
     if (!user) {
       res.status(404).json({
@@ -39,8 +35,8 @@ export const AuthMiddleware = async (
       return;
     }
 
-    // Attach user to request object
-    (req as any).user = user; // Use `as any` to avoid TypeScript complaints
+  
+    (req as any).user = user;
     next();
   } catch (error) {
     console.error("Error in AuthMiddleware:", error);

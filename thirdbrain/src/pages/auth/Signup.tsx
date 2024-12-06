@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import axios from "axios";
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { RegisterUser } from "../../store/auth-slice";
 
 const Signup = () => {
+  const [typePassword, setTypePassword] = useState("password");
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const navigate = useNavigate();
@@ -28,11 +29,15 @@ const Signup = () => {
     });
   };
   return (
-    <div>
-      <h1 className=" text-xl font-bold text-center">Signup</h1>
+    <div className="shadow min-w-60 w-72 p-5 bg-white rounded-lg">
+      <h1 className=" text-xl font-bold  text-center">Signup</h1>
       <div className="my-5 min-w-48 space-y-5">
-        <Input refs={usernameRef} placeholder="Username" />
-        <Input refs={passwordRef} placeholder="Password" />
+        <Input refs={usernameRef} placeholder="Username" type="text" />
+        <Input
+          refs={passwordRef}
+          placeholder="Password"
+          type={typePassword} // "password" or "text" dynamically handled
+        />
       </div>
       <div className="flex justify-center">
         <Button

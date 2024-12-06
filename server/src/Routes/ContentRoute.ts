@@ -4,16 +4,21 @@ import { ContentModel } from "../Models/Content";
 import LinkModel from "../Models/Link";
 import { RandomLink } from "../utils";
 import UserModel from "../Models/User";
+import TagModel from "../Models/Tags";
 
 const ContentRouter: Router = express.Router();
 
 ContentRouter.get(
-  "/all-contents",AuthMiddleware,
+  "/all-contents",
+  AuthMiddleware,
   async (req: Request, res: Response): Promise<any> => {
     try {
       // //@ts-ignore
       // const user = req.user;
-      const contents = await ContentModel.find().populate("userId", "username");
+      const contents = await ContentModel.find()
+        .populate("userId", "username")
+        .populate("tags", "title");
+
       if (contents && contents.length === 0) {
         return res.status(200).json({
           success: false,
@@ -33,6 +38,7 @@ ContentRouter.get(
     }
   }
 );
+
 ContentRouter.get(
   "/user-contents",
   AuthMiddleware,
@@ -40,10 +46,9 @@ ContentRouter.get(
     try {
       //@ts-ignore
       const user = req.user;
-      const contents = await ContentModel.find({ userId: user._id }).populate(
-        "userId",
-        "username"
-      );
+      const contents = await ContentModel.find({ userId: user._id })
+        .populate("userId", "username")
+        .populate("tags", "title");
       if (contents && contents.length === 0) {
         return res.status(200).json({
           success: false,
@@ -72,12 +77,18 @@ ContentRouter.post(
       const bodyData = req.body;
       //@ts-ignore
       const user = req.user;
+      console.log(bodyData);
+
+      const tags = await TagModel.create({
+        userId: user._id,
+        title: bodyData.tagTitle,
+      });
 
       await ContentModel.create({
         title: bodyData.title,
         link: bodyData.link,
         type: bodyData.type,
-        tags: bodyData.tags,
+        tags: tags._id,
         userId: user._id,
       });
       res.status(200).json({
@@ -102,7 +113,6 @@ ContentRouter.delete(
       //@ts-ignore
       const user = req.user;
       const data = req.body;
-      
 
       const deletedContent = await ContentModel.findByIdAndDelete({
         _id: data.contentId,
@@ -168,7 +178,7 @@ ContentRouter.post(
     if (share) {
       const existingLink = await LinkModel.findOne({
         //@ts-ignore
-        userId: req.userId,
+        userId: req.user._id,
       });
       if (existingLink) {
         res.status(200).json({
@@ -179,7 +189,7 @@ ContentRouter.post(
       const hash = RandomLink(10);
       await LinkModel.create({
         //@ts-ignore
-        userId: req.userId,
+        userId: req.user._id,
         hash: hash,
       });
       res.status(200).json({
@@ -188,7 +198,7 @@ ContentRouter.post(
     } else {
       await LinkModel.deleteOne({
         //@ts-ignore
-        userId: req.userId,
+        userId: req.user._id,
       });
       res.status(200).json({
         message: "Remove Link",
@@ -199,7 +209,6 @@ ContentRouter.post(
 
 ContentRouter.get("/brain/:shareLink", async (req: Request, res: Response) => {
   const hash = req.params.shareLink;
-
   const link = await LinkModel.findOne({ hash: hash });
   if (!link) {
     res.status(411).json({
