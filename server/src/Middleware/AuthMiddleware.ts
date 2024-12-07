@@ -1,14 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import UserModel from "../Models/User";
 
+interface AuthenticatedRequest extends Request {
+  user?: any; // You can replace `any` with the actual user type if you have a User interface/model.
+}
+
 export const AuthMiddleware = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const token = req.cookies?.token;
+
     if (!token) {
       res.status(401).json({
         success: false,
@@ -17,21 +22,9 @@ export const AuthMiddleware = async (
       return;
     }
 
-    const decodedData = jwt.verify(
-      token,
-      process.env.USER_JWT_SECRET!,
-      (err, decoded) => {
-        if (err) {
-          const message =
-            err.name === "TokenExpiredError"
-              ? "Session expired. Please log in again."
-              : "Invalid token. Please log in again.";
-          res.status(401).json({ success: false, message });
-          return;
-        }
-        return decoded;
-      }
-    );
+    // Synchronous verification
+    const decodedData = jwt.verify(token, process.env.USER_JWT_SECRET!) as JwtPayload;
+
     if (!decodedData || !decodedData.id) {
       res.status(403).json({
         success: false,
@@ -39,6 +32,7 @@ export const AuthMiddleware = async (
       });
       return;
     }
+
     const user = await UserModel.findById(decodedData.id).select("-password");
     if (!user) {
       res.status(404).json({
@@ -48,14 +42,20 @@ export const AuthMiddleware = async (
       return;
     }
 
-    (req as any).user = user;
-    next();
-  } catch (error) {
-    console.error("Error in AuthMiddleware:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
-    return;
+    req.user = user; // Attach user to the request object
+    next(); // Proceed to the next middleware
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      res.status(401).json({
+        success: false,
+        message: "Session expired. Please log in again.",
+      });
+    } else {
+      console.error("Error in AuthMiddleware:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+      });
+    }
   }
 };
