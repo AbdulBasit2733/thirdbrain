@@ -16,7 +16,7 @@ const Input = ({ refs, placeholder, type }: InputProps) => {
     <div
       className={`${
         type === "password"
-          ? "border border-slate-500 rounded-md pr-2 pl-4 flex items-center justify-between"
+          ? "border border-slate-500 rounded-md pr-2 flex items-center justify-between"
           : ""
       }`}
     >

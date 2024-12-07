@@ -12,6 +12,8 @@ import Main from "./components/Main";
 import AllContents from "./pages/AllContents";
 import MyContents from "./pages/MyContents";
 import Share from "./pages/Share";
+import TwitterContents from "./pages/TwitterContents";
+import Youtube from "./pages/Youtube";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -76,6 +78,8 @@ const App = () => {
             <Route path="/" element={<Main />} />
             {/* <Route path="all-contents" element={<AllContents />}/> */}
             <Route path="my-contents" element={<MyContents />} />
+            <Route path="twitter-contents" element={<TwitterContents />}/>
+            <Route path="youtube-contents" element={<Youtube />}/>
           </Route>
           <Route path="share/:shareLink" element={<Share />} />
         </Routes>
