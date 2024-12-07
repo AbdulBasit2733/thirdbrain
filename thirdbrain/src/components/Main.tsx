@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
-import useContent from "../hooks/useContent";
+
 import PlusIcon from "../Icons/PlusIcon";
 import CreateContentModal from "./CreateContentModal";
 import Card from "./Card";

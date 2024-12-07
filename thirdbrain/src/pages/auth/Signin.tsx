@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { LoginUser } from "../../store/auth-slice";

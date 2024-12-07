@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import ContentRouter from "./Routes/ContentRoute";
 
 const MONGODB_URL = process.env.MONGODB_URL
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 4000
 dotenv.config();
 
 const app = express();

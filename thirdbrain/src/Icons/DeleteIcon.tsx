@@ -1,4 +1,3 @@
-import IconStyles from "./IconsStyles";
 
 const DeleteIcon = () => {
   return (

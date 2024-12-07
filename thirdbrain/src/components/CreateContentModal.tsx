@@ -1,9 +1,7 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import CrossIcon from "../Icons/CrossIcon";
 import Button from "./Button";
 import Input from "./Input";
-import axios from "axios";
-import BACKEND_URL from "../../config";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { CreateContent, UserContents } from "../store/content-slice";

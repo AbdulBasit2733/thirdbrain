@@ -1,4 +1,4 @@
-import IconStyles from "./IconsStyles"
+
 
  const ShareIcon = () => {
     return (

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 
 const SidebarItem = ({ text, icon, link }: { text: string; icon: ReactElement, link:string }) => {
