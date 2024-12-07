@@ -8,7 +8,7 @@ const Share = () => {
   const params = useParams();
   const fetchContentFromLink = async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/brain/${params.shareLink}`
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/brain/${params.shareLink}`
     );
     setData(response.data);
   };

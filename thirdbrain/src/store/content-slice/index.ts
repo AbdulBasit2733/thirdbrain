@@ -38,7 +38,7 @@ export const allContents = createAsyncThunk(
     signal.addEventListener("abort", () => controller.abort());
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/all-contents`,
+        `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/all-contents`,
         {
           withCredentials: true,
           signal: controller.signal,
@@ -63,7 +63,7 @@ export const UserContents = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/user-contents`,
+        `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/user-contents`,
         {
           withCredentials: true,
           signal: controller.signal, // Pass the AbortController signal
@@ -84,7 +84,7 @@ export const CreateContent = createAsyncThunk(
   "/content/create-content",
   async (formData) => {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/create-content`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/create-content`,
       formData,
       {
         withCredentials: true,
@@ -98,7 +98,7 @@ export const editContent = createAsyncThunk(
   "/content/edit-content",
   async (formData) => {
     const response = await axios.put(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/edit`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/edit`,
       formData,
       {
         withCredentials: true,
@@ -112,7 +112,7 @@ export const deleteContent = createAsyncThunk(
   "/content/delete",
   async (contentId) => {
     const response = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/delete`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/delete`,
       {
         data: {contentId},
         withCredentials: true,

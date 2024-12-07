@@ -19,7 +19,7 @@ const Header = () => {
         onClick={async () => {
           try {
             const response = await axios.post(
-              `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/brain/share`,
+              `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/brain/share`,
               {
                 share: true,
               },
