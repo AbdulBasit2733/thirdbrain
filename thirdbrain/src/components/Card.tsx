@@ -54,6 +54,7 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
             ></iframe>
           )}
           {type === "twitter" && normalizedLink && (
+            // <blockquote class="twitter-tweet" data-media-max-width="560"><p lang="en" dir="ltr">The name&#39;s devs, 100x Devs. <a href="https://t.co/rtkvr60R8i">pic.twitter.com/rtkvr60R8i</a></p>&mdash; 100xDevs (@100xDevs) <a href="https://twitter.com/100xDevs/status/1864654110290743473?ref_src=twsrc%5Etfw">December 5, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             <blockquote className="twitter-tweet">
               <a href={normalizedLink}></a>
             </blockquote>
@@ -66,11 +67,9 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
             </h1>
             <p className="font-normal text-sm">{username}</p>
             {tags && tags.length > 0 ? (
-              <div className="text-xs bg-yellow-300 text-black w-fit px-2 py-0.5 rounded-md mt-2">
+              <div className="text-xs bg-purple-200 text-indigo-600 font-semibold w-fit px-2 py-1 rounded-md mt-2">
                 {tags.map((t) => (
-                  <p key={t._id}>
-                    {t.title}
-                  </p>
+                  <p key={t._id}>{t.title}</p>
                 ))}
               </div>
             ) : null}

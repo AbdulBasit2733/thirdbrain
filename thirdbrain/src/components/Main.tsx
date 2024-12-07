@@ -60,7 +60,9 @@ const Main = () => {
             open={modelOpen}
             onClose={() => setModelOpen(!open)}
           />
-          <div className=" flex gap-3 flex-wrap mt-10">
+          <div>
+            <h1 className="text-2xl font-bold my-5">Feed</h1>
+          <div className=" flex gap-3 flex-wrap">
             {!contents || contents.length === 0 ? (
               <h1 className="text-2xl font-semibold">
                 No Content is Available Please Create Content First
@@ -74,9 +76,11 @@ const Main = () => {
                   type={type}
                   title={title}
                   link={link}
+                  tags={tags}
                 />
               ))
             )}
+          </div>
           </div>
         </div>
       )}

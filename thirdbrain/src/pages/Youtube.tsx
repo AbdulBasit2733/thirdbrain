@@ -1,15 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "../components/Card";
+import CreateContentModal from "../components/CreateContentModal";
+import PlusIcon from "../Icons/PlusIcon";
+import Button from "../components/Button";
 
 const Youtube = () => {
+  const [modelOpen, setModelOpen] = useState(false);
   const { contents, isLoading } = useSelector((state) => state.content);
-  const {user} = useSelector((state) => state.auth)
+  const { user } = useSelector((state) => state.auth);
 
-  const filteredContents = contents && contents.length > 0 && contents.filter((f) => f.type !== 'twitter' && f.userId.username ===  user.username)
-  
+  const filteredContents =
+    contents &&
+    contents.length > 0 &&
+    contents.filter(
+      (f) => f.type !== "twitter" && f.userId.username === user.username
+    );
+
   return (
     <div className="">
+      <div className="flex justify-end mb-5">
+        <Button
+          onClick={() => {
+            setModelOpen(true);
+          }}
+          variant="primary"
+          text={"Add Content"}
+          startIcon={<PlusIcon />}
+        />
+      </div>
+      <CreateContentModal
+        open={modelOpen}
+        onClose={() => setModelOpen(false)}
+      />
       {isLoading && (
         <div className="text-center flex justify-center items-center h-screen">
           <div role="status">
@@ -33,12 +56,27 @@ const Youtube = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-wrap gap-5">
-      { filteredContents.length === 0 ? <h1 className='text-2xl font-semibold'>No Content Available related to youtube</h1> :
-          filteredContents.map(({ type, title, link, _id, userId, tags }) => 
-              <Card contentId={_id} username={userId.username} key={_id} type={type} title={title} link={link} tags={tags} />
-          )
-      }
+      <div>
+      <h1 className="text-2xl font-semibold mb-3">Youtube Videos</h1>
+        <div className="flex flex-wrap gap-5">
+          {filteredContents.length === 0 ? (
+            <h1 className="text-sm font-normal">
+              No Content Available related to youtube
+            </h1>
+          ) : (
+            filteredContents.map(({ type, title, link, _id, userId, tags }) => (
+              <Card
+                contentId={_id}
+                username={userId.username}
+                key={_id}
+                type={type}
+                title={title}
+                link={link}
+                tags={tags}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

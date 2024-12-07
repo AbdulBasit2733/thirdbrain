@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import BACKEND_URL from "../../config";
 import Card from "../components/Card";
 
 const Share = () => {
@@ -9,7 +8,7 @@ const Share = () => {
   const params = useParams();
   const fetchContentFromLink = async () => {
     const response = await axios.get(
-      `${BACKEND_URL}/api/v1/content/brain/${params.shareLink}`
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/brain/${params.shareLink}`
     );
     setData(response.data);
   };

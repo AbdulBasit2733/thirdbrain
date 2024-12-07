@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import UserModel from "../Models/User";
-import { USER_JWT_SECRET } from "../config";
 
 export const AuthMiddleware = async (
   req: Request,
@@ -18,7 +17,21 @@ export const AuthMiddleware = async (
       return;
     }
 
-    const decodedData = jwt.verify(token, USER_JWT_SECRET) as { id: string }; 
+    const decodedData = jwt.verify(
+      token,
+      process.env.USER_JWT_SECRET!,
+      (err, decoded) => {
+        if (err) {
+          const message =
+            err.name === "TokenExpiredError"
+              ? "Session expired. Please log in again."
+              : "Invalid token. Please log in again.";
+          res.status(401).json({ success: false, message });
+          return;
+        }
+        return decoded;
+      }
+    );
     if (!decodedData || !decodedData.id) {
       res.status(403).json({
         success: false,
@@ -35,7 +48,6 @@ export const AuthMiddleware = async (
       return;
     }
 
-  
     (req as any).user = user;
     next();
   } catch (error) {

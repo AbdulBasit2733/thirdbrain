@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import BACKEND_URL from "../../../config";
 
 interface Tag {
   _id: string;
@@ -39,7 +38,7 @@ export const allContents = createAsyncThunk(
     signal.addEventListener("abort", () => controller.abort());
     try {
       const response = await axios.get(
-        `${BACKEND_URL}/api/v1/content/all-contents`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/all-contents`,
         {
           withCredentials: true,
           signal: controller.signal,
@@ -64,7 +63,7 @@ export const UserContents = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `${BACKEND_URL}/api/v1/content/user-contents`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/user-contents`,
         {
           withCredentials: true,
           signal: controller.signal, // Pass the AbortController signal
@@ -85,7 +84,7 @@ export const CreateContent = createAsyncThunk(
   "/content/create-content",
   async (formData) => {
     const response = await axios.post(
-      `${BACKEND_URL}/api/v1/content/create-content`,
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/create-content`,
       formData,
       {
         withCredentials: true,
@@ -99,7 +98,7 @@ export const editContent = createAsyncThunk(
   "/content/edit-content",
   async (formData) => {
     const response = await axios.put(
-      `${BACKEND_URL}/api/v1/content/edit`,
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/edit`,
       formData,
       {
         withCredentials: true,
@@ -113,7 +112,7 @@ export const deleteContent = createAsyncThunk(
   "/content/delete",
   async (contentId) => {
     const response = await axios.delete(
-      `${BACKEND_URL}/api/v1/content/delete`,
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/delete`,
       {
         data: {contentId},
         withCredentials: true,

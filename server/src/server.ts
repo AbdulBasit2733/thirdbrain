@@ -6,6 +6,8 @@ import UserRouter from "./Routes/UserRoute";
 import dotenv from "dotenv";
 import ContentRouter from "./Routes/ContentRoute";
 
+const MONGODB_URL = process.env.MONGODB_URL
+const PORT = process.env.PORT
 dotenv.config();
 
 const app = express();
@@ -26,12 +28,12 @@ async function Main() {
   try {
     await mongoose
       .connect(
-        "mongodb+srv://abdulbasitkhan8669:7A3qgPAHiZW0q6XY@second-brain-cluster.iszs7.mongodb.net/Second-Brain"
+        `${MONGODB_URL}/Second-Brain`
       )
       .then(() => {
         console.log("Mongodb database is connected");
-        app.listen(3000, () => {
-          console.log(`App is running on http://localhost:3000`);
+        app.listen(PORT, () => {
+          console.log(`App is running on http://localhost:${PORT}`);
         });
       }).catch((error) => {
         console.log("Error Occured : ", error);

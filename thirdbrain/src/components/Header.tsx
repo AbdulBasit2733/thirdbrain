@@ -3,14 +3,10 @@ import { toast } from "react-toastify";
 import Button from "./Button";
 import LogoutIcon from "../Icons/LogoutIcon";
 import { LogoutUser } from "../store/auth-slice";
-import { Link } from "react-router-dom";
-import SettingsIcon from "../Icons/SettingsIcon";
 import ProfileIcon from "../Icons/ProfileIcon";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import BACKEND_URL from "../../config";
 import axios from "axios";
-import AccountIcon from "../Icons/AccountIcon";
 import ShareIcon from "../Icons/ShareIcon";
 
 const Header = () => {
@@ -23,14 +19,12 @@ const Header = () => {
         onClick={async () => {
           try {
             const response = await axios.post(
-              `${BACKEND_URL}/api/v1/content/brain/share`,
+              `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/brain/share`,
               {
                 share: true,
               },
               { withCredentials: true }
             );
-            console.log(response);
-
             const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
             await window.navigator.clipboard.writeText(shareUrl);
             toast.success("Copied The Url");

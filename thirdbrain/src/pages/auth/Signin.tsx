@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import axios from "axios";
-import BACKEND_URL from "../../../config";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { LoginUser } from "../../store/auth-slice";
@@ -28,7 +27,6 @@ const Signin = () => {
       <h1 className=" text-xl font-bold text-center">Signin</h1>
       <div className="my-5 min-w-48 space-y-5">
         <Input refs={usernameRef} placeholder="Username" type="text" />
-
         <Input
           refs={passwordRef}
           placeholder="Password"
