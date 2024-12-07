@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthLayout from "./components/Auth/AuthLayout";
 import Signin from "./pages/auth/Signin";
@@ -9,7 +9,6 @@ import { CheckAuthentication } from "./store/auth-slice";
 
 import Dasboard from "./pages/Dashboard/Dasboard";
 import Main from "./components/Main";
-import AllContents from "./pages/AllContents";
 import MyContents from "./pages/MyContents";
 import Share from "./pages/Share";
 import TwitterContents from "./pages/TwitterContents";

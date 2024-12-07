@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "../components/Card";
 import CreateContentModal from "../components/CreateContentModal";
