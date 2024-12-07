@@ -6,6 +6,10 @@ thirdbrain/node_modules/
 server/.env
 thirdbrain/.env
 
+# unneccessary
+
+server/dist/
+
 # Logs
 *.log
 logs/

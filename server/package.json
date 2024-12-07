@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc -b",
     "start": "node dist/server.js",
-    "dev": "npm run build && npm run start"
+    "dev": "tsc -b && nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",
