@@ -1,23 +1,29 @@
 import { useState } from "react";
 
 interface InputProps {
-  refs?: any;
+  refs?: React.RefObject<HTMLInputElement>;
   placeholder: string;
-  type?: string; // Updated to handle any input type
+  type?: "text" | "password"; // Restrict type to "text" or "password"
+  setTypePassword?: React.Dispatch<React.SetStateAction<"password" | "text">>; // Added to toggle password visibility
 }
 
-const Input = ({ refs, placeholder, type }: InputProps) => {
+const Input = ({ refs, placeholder, type = "text", setTypePassword }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Determine input type dynamically
-  const inputType = type === "password" && showPassword ? "text" : type
+  const inputType = type === "password" && showPassword ? "text" : type;
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    if (setTypePassword) {
+      setTypePassword(showPassword ? "password" : "text"); // Update the parent state for visibility toggle
+    }
+  };
 
   return (
     <div
       className={`${
-        type === "password"
-          ? "border border-slate-500 rounded-md pr-2 flex items-center justify-between"
-          : ""
+        type === "password" ? "border border-slate-500 rounded-md pr-2 flex items-center justify-between" : ""
       }`}
     >
       <input
@@ -30,11 +36,7 @@ const Input = ({ refs, placeholder, type }: InputProps) => {
         required
       />
       {type === "password" && (
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="p-2"
-        >
+        <button type="button" onClick={togglePasswordVisibility} className="p-2">
           {showPassword ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"

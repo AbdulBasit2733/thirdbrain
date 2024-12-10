@@ -4,7 +4,7 @@ import AuthLayout from "./components/Auth/AuthLayout";
 import Signin from "./pages/auth/Signin";
 import Signup from "./pages/auth/Signup";
 import CheckAuth from "./components/Auth/CheckAuth";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { CheckAuthentication } from "./store/auth-slice";
 
 import Dasboard from "./pages/Dashboard/Dasboard";
@@ -13,11 +13,13 @@ import MyContents from "./pages/MyContents";
 import Share from "./pages/Share";
 import TwitterContents from "./pages/TwitterContents";
 import Youtube from "./pages/Youtube";
+import { useAppDispatch } from "./hooks/useAppDispatch";
+import { RootState } from "./store/store";
 
 const App = () => {
-  const dispatch = useDispatch();
-  const { isAuthenticated, isLoading, error } = useSelector(
-    (state) => state.auth
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, isLoading } = useSelector(
+    (state: RootState) => state.auth
   );
 
   useEffect(() => {
@@ -48,8 +50,6 @@ const App = () => {
             <span className="sr-only">Loading...</span>
           </div>
         </div>
-      ) : error ? (
-        <p>Error: {error}</p>
       ) : (
         <Routes>
           {/* Authentication routes */}
@@ -77,8 +77,8 @@ const App = () => {
             <Route path="/" element={<Main />} />
             {/* <Route path="all-contents" element={<AllContents />}/> */}
             <Route path="my-contents" element={<MyContents />} />
-            <Route path="twitter-contents" element={<TwitterContents />}/>
-            <Route path="youtube-contents" element={<Youtube />}/>
+            <Route path="twitter-contents" element={<TwitterContents />} />
+            <Route path="youtube-contents" element={<Youtube />} />
           </Route>
           <Route path="share/:shareLink" element={<Share />} />
         </Routes>

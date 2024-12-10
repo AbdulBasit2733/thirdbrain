@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import PlusIcon from "../Icons/PlusIcon";
 import CreateContentModal from "../components/CreateContentModal";
-import { useSelector, useDispatch } from "react-redux";
-import { UserContents } from "../store/content-slice";
+import { useSelector } from "react-redux";
+import { userContents } from "../store/content-slice";
 import Card from "../components/Card";
+import { useAppDispatch } from "../hooks/useAppDispatch";
+import { Content, ContentState } from "../types/types"; // Import the global types
 
 const MyContents = () => {
   const [modelOpen, setModelOpen] = useState(false);
-  const { contents, isLoading } = useSelector((state) => state.content);
+  // Use the ContentState type from the global types
+  const { contents, isLoading } = useSelector(
+    (state: { content: ContentState }) => state.content
+  );
   console.log(contents);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal;
 
-    dispatch(UserContents(signal));
+    dispatch(userContents());
 
     return () => {
       controller.abort();
@@ -72,7 +76,7 @@ const MyContents = () => {
                   No Content is Available. Please Create Content First.
                 </h1>
               ) : (
-                contents.map(({ type, title, link, _id, userId, tags }) => (
+                contents.map(({ type, title, link, _id, userId, tags }: Content) => (
                   <Card
                     contentId={_id}
                     username={userId.username}

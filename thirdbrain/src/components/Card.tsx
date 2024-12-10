@@ -1,26 +1,28 @@
 import ShareIcon from "../Icons/ShareIcon";
 import DeleteIcon from "../Icons/DeleteIcon";
-import { useDispatch } from "react-redux";
-import { deleteContent, UserContents } from "../store/content-slice";
+// import { useDispatch } from "react-redux";
+import { deleteContent, userContents } from "../store/content-slice";
 import { toast } from "react-toastify";
+import { useAppDispatch } from "../hooks/useAppDispatch";
+import React from "react";
 
 interface CardProps {
   contentId: string;
   title: string;
   link: string;
-  type: "twitter" | "youtube";
+  type: "twitter" | "youtube" | string;
   username: string;
   tags: Array<any>;
 }
 
-const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
-  const dispatch = useDispatch();
+const Card:React.FC<CardProps> = ({ title, link, type, username, contentId, tags }) => {
+  const dispatch = useAppDispatch();
 
   const normalizedLink =
     typeof link === "string" ? link.replace("x.com", "twitter.com") : "";
   const youtubeEmbedLink =
     typeof link === "string" && link.includes("watch")
-      ? link.replace("watch?v=", "embed/")
+      ? link.replace("watch?v=", "embed/") 
       : link;
 
   const handleDelete = async () => {
@@ -28,7 +30,7 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
       const data = await dispatch(deleteContent(contentId)).unwrap();
       if (data.success) {
         toast.success(data.message);
-        dispatch(UserContents());
+        dispatch(userContents()); // Ensure this action is correctly defined for fetching user contents
       } else {
         toast.error(data.message);
       }

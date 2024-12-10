@@ -1,21 +1,22 @@
-import {useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "../components/Card";
 import CreateContentModal from "../components/CreateContentModal";
 import PlusIcon from "../Icons/PlusIcon";
 import Button from "../components/Button";
+import { RootState } from "../store/store";
 
 const Youtube = () => {
   const [modelOpen, setModelOpen] = useState(false);
-  const { contents, isLoading } = useSelector((state) => state.content);
-  const { user } = useSelector((state) => state.auth);
+  const { contents, isLoading } = useSelector((state: RootState) => state.content);
+  const { user } = useSelector((state: RootState) => state.auth);
 
-  const filteredContents =
-    contents &&
-    contents.length > 0 &&
-    contents.filter(
-      (f) => f.type !== "twitter" && f.userId.username === user.username
-    );
+  // Ensure `filteredContents` is always an array
+  const filteredContents = Array.isArray(contents)
+    ? contents.filter(
+        (f) => f.type !== "twitter" && f.userId.username === user?.username
+      )
+    : []; // Return empty array if `contents` is not an array
 
   return (
     <div className="">
@@ -29,10 +30,7 @@ const Youtube = () => {
           startIcon={<PlusIcon />}
         />
       </div>
-      <CreateContentModal
-        open={modelOpen}
-        onClose={() => setModelOpen(false)}
-      />
+      <CreateContentModal open={modelOpen} onClose={() => setModelOpen(false)} />
       {isLoading && (
         <div className="text-center flex justify-center items-center h-screen">
           <div role="status">
@@ -57,24 +55,28 @@ const Youtube = () => {
         </div>
       )}
       <div>
-      <h1 className="text-2xl font-semibold mb-3">Youtube Videos</h1>
+        <h1 className="text-2xl font-semibold mb-3">Youtube Videos</h1>
         <div className="flex flex-wrap gap-5">
           {filteredContents.length === 0 ? (
             <h1 className="text-sm font-normal">
               No Content Available related to youtube
             </h1>
           ) : (
-            filteredContents.map(({ type, title, link, _id, userId, tags }) => (
-              <Card
-                contentId={_id}
-                username={userId.username}
-                key={_id}
-                type={type}
-                title={title}
-                link={link}
-                tags={tags}
-              />
-            ))
+            filteredContents.map((content) => {
+              // Make sure the content properties are properly typed
+              const { type, title, link, _id, userId, tags } = content;
+              return (
+                <Card
+                  contentId={_id}
+                  username={userId.username}
+                  key={_id}
+                  type={type}
+                  title={title}
+                  link={link}
+                  tags={tags}
+                />
+              );
+            })
           )}
         </div>
       </div>

@@ -5,17 +5,27 @@ import PlusIcon from "../Icons/PlusIcon";
 import CreateContentModal from "./CreateContentModal";
 import Card from "./Card";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { allContents } from "../store/content-slice";
+import { RootState } from "../store/store";
+import { useAppDispatch } from "../hooks/useAppDispatch";
 
+// interface CardProps {
+//   contentId: string;
+//   title: string;
+//   link: string;
+//   type: "twitter" | "youtube";
+//   username: string;
+//   tags: Array<any>;
+// }
 const Main = () => {
   const [modelOpen, setModelOpen] = useState(false);
-  const { contents, isLoading } = useSelector((state) => state.content);
-  const dispatch = useDispatch();
+  const { contents, isLoading } = useSelector((state:RootState) => state.content);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal;
-    dispatch(allContents(signal));
+    // const signal = controller.signal;
+    dispatch(allContents());
     return () => {
       controller.abort();
     };

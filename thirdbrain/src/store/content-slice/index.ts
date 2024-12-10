@@ -1,38 +1,22 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-
-interface Tag {
-  _id: string;
-  userId: string;
-  title: string;
-}
-
-interface User {
-  _id: string;
-  username: string;
-}
-
-interface Content {
-  _id: string;
-  title: string;
-  link: string;
-  type: string;
-  tags: Tag[];
-  userId: User;
-}
-
-interface InitialStateProps {
-  isLoading: boolean;
-  contents: Content[] | null;
-}
+import {
+  Content,
+  CreateContentData,
+  DeleteContentResponse,
+  InitialStateProps,
+} from "../../types/types";
 
 const initialState: InitialStateProps = {
   isLoading: false,
-  contents: null,
+  contents: [],
+  isAuthenticated: false,
+  user: null
 };
 
+// Fetch all contents
 export const allContents = createAsyncThunk(
-  "/contents/all-contents",
+  "contents/all-contents",
   async (_, { signal }) => {
     const controller = new AbortController();
     signal.addEventListener("abort", () => controller.abort());
@@ -44,7 +28,6 @@ export const allContents = createAsyncThunk(
           signal: controller.signal,
         }
       );
-
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -55,21 +38,21 @@ export const allContents = createAsyncThunk(
     }
   }
 );
-export const UserContents = createAsyncThunk(
-  "/content/user-contents",
+
+// Fetch user-specific contents
+export const userContents = createAsyncThunk(
+  "content/user-contents",
   async (_, { signal }) => {
     const controller = new AbortController();
     signal.addEventListener("abort", () => controller.abort());
-
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/user-contents`,
         {
           withCredentials: true,
-          signal: controller.signal, // Pass the AbortController signal
+          signal: controller.signal,
         }
       );
-
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -80,23 +63,24 @@ export const UserContents = createAsyncThunk(
     }
   }
 );
-export const CreateContent = createAsyncThunk(
-  "/content/create-content",
-  async (formData) => {
+
+// Create a new content
+export const createContent = createAsyncThunk(
+  "content/create-content",
+  async (formData: CreateContentData) => {
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/create-content`,
       formData,
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
     return response.data;
   }
 );
 
+// Edit an existing content
 export const editContent = createAsyncThunk(
-  "/content/edit-content",
-  async (formData) => {
+  "content/edit-content",
+  async (formData: Content) => {
     const response = await axios.put(
       `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/edit`,
       formData,
@@ -108,13 +92,17 @@ export const editContent = createAsyncThunk(
   }
 );
 
-export const deleteContent = createAsyncThunk(
-  "/content/delete",
+// Delete a content
+export const deleteContent = createAsyncThunk<
+  DeleteContentResponse, // Return type
+  string // Argument type
+>(
+  "content/delete",
   async (contentId) => {
     const response = await axios.delete(
       `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/delete`,
       {
-        data: {contentId},
+        data: { contentId },
         withCredentials: true,
       }
     );
@@ -122,16 +110,16 @@ export const deleteContent = createAsyncThunk(
   }
 );
 
-const ContentSlice = createSlice({
+const contentSlice = createSlice({
   name: "content",
   initialState,
   reducers: {},
-  extraReducers(builder) {
+  extraReducers: (builder) => {
     builder
       .addCase(allContents.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(allContents.fulfilled, (state, action) => {
+      .addCase(allContents.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.contents = action.payload.success
           ? action.payload.contents
@@ -141,36 +129,36 @@ const ContentSlice = createSlice({
         state.isLoading = false;
         state.contents = null;
       })
-      .addCase(UserContents.pending, (state) => {
+      .addCase(userContents.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(UserContents.fulfilled, (state, action) => {
+      .addCase(userContents.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.contents = action.payload.success
           ? action.payload.contents
           : null;
       })
-      .addCase(UserContents.rejected, (state) => {
+      .addCase(userContents.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
       })
-      .addCase(CreateContent.pending, (state) => {
+      .addCase(createContent.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(CreateContent.fulfilled, (state, action) => {
+      .addCase(createContent.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.contents = action.payload.success
           ? action.payload.contents
           : null;
       })
-      .addCase(CreateContent.rejected, (state) => {
+      .addCase(createContent.rejected, (state) => {
         state.isLoading = false;
         state.contents = null;
       })
       .addCase(editContent.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(editContent.fulfilled, (state, action) => {
+      .addCase(editContent.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.contents = action.payload.success
           ? action.payload.contents
@@ -183,9 +171,12 @@ const ContentSlice = createSlice({
       .addCase(deleteContent.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteContent.fulfilled, (state, action) => {
+      .addCase(deleteContent.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.contents = state.contents;
+        state.contents =
+          state.contents?.filter(
+            (content) => content._id !== action.payload.contentId
+          ) || null;
       })
       .addCase(deleteContent.rejected, (state) => {
         state.isLoading = false;
@@ -194,4 +185,4 @@ const ContentSlice = createSlice({
   },
 });
 
-export default ContentSlice.reducer;
+export default contentSlice.reducer;

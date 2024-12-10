@@ -12,9 +12,10 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
+    "noEmit": true, // Keeping `noEmit: true` here since this is a "type-only" config for app (not for emitting JS files)
 
+    "jsx": "react-jsx", // Ensure JSX is set for React 17+
+    
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -22,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"]  // Specify source files
 }

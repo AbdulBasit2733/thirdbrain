@@ -4,25 +4,32 @@ import Button from "../components/Button";
 import PlusIcon from "../Icons/PlusIcon";
 import CreateContentModal from "../components/CreateContentModal";
 import Card from "../components/Card";
+import { RootState } from "../store/store"; // Import the RootState type
+import { Content } from "../types/types"; // Import global Content type
 
-const TwitterContents = () => {
-  const [modelOpen, setModelOpen] = useState(false);
-  const { contents, isLoading } = useSelector((state) => state.content);
-  const { user } = useSelector((state) => state.auth);
+const TwitterContents: React.FC = () => {
+  const [modelOpen, setModelOpen] = useState<boolean>(false);
+  const { contents, isLoading } = useSelector(
+    (state: RootState) => state.content
+  );
+  const { user } = useSelector((state: RootState) => state.auth);
 
-  const filteredContents =
-    contents?.filter(
-      (f) => f.type !== "youtube" && f.userId.username === user.username
-    ) || [];
+  // Filter contents based on user and type ('twitter' or 'youtube')
+  const filteredContents: Content[] = Array.isArray(contents)
+    ? contents.filter(
+        (content): content is Content =>
+          (content.type === "twitter" || content.type === "youtube") &&
+          content.userId.username === user?.username
+      )
+    : [];
+
   return (
-    <div className="">
+    <div>
       <div className="flex justify-end mb-5">
         <Button
-          onClick={() => {
-            setModelOpen(true);
-          }}
+          onClick={() => setModelOpen(true)}
           variant="primary"
-          text={"Add Content"}
+          text="Add Content"
           startIcon={<PlusIcon />}
         />
       </div>
@@ -58,7 +65,7 @@ const TwitterContents = () => {
         <div className="flex flex-wrap gap-5">
           {filteredContents.length === 0 ? (
             <h1 className="text-sm font-normal">
-              No Content Available related to twitter
+              No Content Available related to Twitter
             </h1>
           ) : (
             filteredContents.map(({ type, title, link, _id, userId, tags }) => (

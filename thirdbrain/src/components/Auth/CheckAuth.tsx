@@ -1,7 +1,11 @@
 
 import { Navigate, useLocation } from "react-router-dom";
 
-const CheckAuth = ({ isAuthenticated, children }) => {
+interface CheckAuthProps {
+  isAuthenticated: boolean;
+  children: React.ReactNode;
+}
+const CheckAuth:React.FC<CheckAuthProps> = ({ isAuthenticated, children }) => {
   const location = useLocation();
 
   // Redirect authenticated users away from signin/signup pages

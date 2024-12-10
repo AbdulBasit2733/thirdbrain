@@ -3,34 +3,54 @@ import CrossIcon from "../Icons/CrossIcon";
 import Button from "./Button";
 import Input from "./Input";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { CreateContent, UserContents } from "../store/content-slice";
+import { createContent, userContents,  } from "../store/content-slice";
+import { useAppDispatch } from "../hooks/useAppDispatch";
 
 enum ContentType {
   Youtube = "youtube",
   Twitter = "twitter",
 }
-const CreateContentModal = ({ open, onClose }) => {
-  const dispatch = useDispatch();
-  const titleRef = useRef<HTMLInputElement>();
-  const linkRef = useRef<HTMLInputElement>();
-  const tagRef = useRef<HTMLInputElement>();
-  const [type, setType] = useState(ContentType.Youtube);
+
+// Props interface for the component
+interface CreateContentModalProps {
+  open: boolean;
+  onClose: (openState: boolean) => void;
+}
+
+const CreateContentModal: React.FC<CreateContentModalProps> = ({ open, onClose }) => {
+  const dispatch = useAppDispatch();
+  const titleRef = useRef<HTMLInputElement>(null);
+  const linkRef = useRef<HTMLInputElement>(null);
+  const tagRef = useRef<HTMLInputElement>(null);
+  const [type, setType] = useState<ContentType>(ContentType.Youtube);
 
   const handleCreateContent = async () => {
     const title = titleRef.current?.value;
     const link = linkRef.current?.value;
     const tagTitle = tagRef.current?.value;
-    dispatch(CreateContent({ title, link, type, tagTitle })).then((data) => {
-      if (data.payload.success) {
-        toast.success(data.payload.message);
+
+    if (!title || !link || !tagTitle) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    try {
+      const response = await dispatch(
+        createContent({ title, link, type, tagTitle })
+      );
+
+      if (response.payload.success) {
+        toast.success(response.payload.message);
         onClose(false);
-        dispatch(UserContents());
+        dispatch(userContents());
       } else {
-        toast.error(data.payload.message);
+        toast.error(response.payload.message);
       }
-    });
+    } catch (error) {
+      toast.error("An error occurred while creating content.");
+    }
   };
+
   return (
     <>
       {open && (
@@ -40,29 +60,29 @@ const CreateContentModal = ({ open, onClose }) => {
               <div className="flex mb-5 items-center justify-between">
                 <h1 className="text-xl font-semibold">Create Content</h1>
                 <button
-                  onClick={onClose}
+                  onClick={() => onClose(false)}
                   className="cursor-pointer hover:bg-indigo-100 transition-all p-2 rounded-lg"
                 >
                   <CrossIcon />
                 </button>
               </div>
               <div className="mt-3 space-y-2 mb-3">
-                <Input refs={titleRef} placeholder={"Title"} />
-                <Input refs={linkRef} placeholder={"Link"} />
-                <Input refs={tagRef} placeholder={"Tags"} />
+                <Input refs={titleRef} placeholder="Title" />
+                <Input refs={linkRef} placeholder="Link" />
+                <Input refs={tagRef} placeholder="Tags" />
               </div>
               <h1 className="text-lg font-semibold mb-4">Type</h1>
               <div className="flex gap-2 items-center mb-5">
                 <Button
                   onClick={() => setType(ContentType.Youtube)}
-                  text={"Youtube"}
+                  text="Youtube"
                   variant={
                     type === ContentType.Youtube ? "primary" : "secondary"
                   }
                 />
                 <Button
                   onClick={() => setType(ContentType.Twitter)}
-                  text={"Twitter"}
+                  text="Twitter"
                   variant={
                     type === ContentType.Twitter ? "primary" : "secondary"
                   }
@@ -72,7 +92,7 @@ const CreateContentModal = ({ open, onClose }) => {
                 <Button
                   onClick={handleCreateContent}
                   variant="primary"
-                  text={"Submit"}
+                  text="Submit"
                 />
               </div>
             </span>
