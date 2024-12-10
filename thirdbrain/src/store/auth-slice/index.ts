@@ -20,7 +20,7 @@ export const RegisterUser = createAsyncThunk(
   "/auth/register",
   async (formData: RegisterUserArgs) => {
     const response = await axios.post<AuthResponse>(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/register`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/register`,
       formData,
       {
         withCredentials: true,
@@ -37,10 +37,9 @@ export const RegisterUser = createAsyncThunk(
 export const LoginUser = createAsyncThunk(
   "/auth/login",
   async (formData: LoginUserArgs) => {
-    console.log(formData);
 
     const response = await axios.post<AuthResponse>(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/login`,
       formData,
       {
         withCredentials: true,
@@ -49,7 +48,6 @@ export const LoginUser = createAsyncThunk(
         },
       }
     );
-    console.log(response);
 
     return response.data;
   }
@@ -60,7 +58,7 @@ export const LogoutUser = createAsyncThunk<AuthResponse>(
   "/auth/logout",
   async () => {
     const response = await axios.post<AuthResponse>(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/logout`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/logout`,
       {
         withCredentials: true,
         headers: {
@@ -77,7 +75,7 @@ export const CheckAuthentication = createAsyncThunk(
   "/auth/check-auth",
   async () => {
     const response = await axios.get<AuthResponse>(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/check-auth`,
+      `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/check-auth`,
       {
         withCredentials: true,
         headers: {

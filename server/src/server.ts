@@ -41,7 +41,7 @@ app.use(
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true, // Allow cookies and credentials
+    credentials: true,
   })
 );
 app.options('*', (req, res) => {
@@ -55,7 +55,7 @@ app.options('*', (req, res) => {
     'Content-Type, Authorization, X-Requested-With'
   );
   res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204); // No Content
+  res.sendStatus(204);
 });
 
 
