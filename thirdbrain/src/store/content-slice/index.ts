@@ -11,7 +11,7 @@ const initialState: InitialStateProps = {
   isLoading: false,
   contents: [],
   isAuthenticated: false,
-  user: null
+  user: null,
 };
 
 // Fetch all contents
@@ -26,6 +26,9 @@ export const allContents = createAsyncThunk(
         {
           withCredentials: true,
           signal: controller.signal,
+          headers: {
+            "Content-Type": "application/json", // Explicitly set content type
+          },
         }
       );
       return response.data;
@@ -51,6 +54,9 @@ export const userContents = createAsyncThunk(
         {
           withCredentials: true,
           signal: controller.signal,
+          headers: {
+            "Content-Type": "application/json", // Explicitly set content type
+          },
         }
       );
       return response.data;
@@ -71,7 +77,12 @@ export const createContent = createAsyncThunk(
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/create-content`,
       formData,
-      { withCredentials: true }
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Explicitly set content type
+        },
+      }
     );
     return response.data;
   }
@@ -86,6 +97,9 @@ export const editContent = createAsyncThunk(
       formData,
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Explicitly set content type
+        },
       }
     );
     return response.data;
@@ -96,19 +110,19 @@ export const editContent = createAsyncThunk(
 export const deleteContent = createAsyncThunk<
   DeleteContentResponse, // Return type
   string // Argument type
->(
-  "content/delete",
-  async (contentId) => {
-    const response = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/delete`,
-      {
-        data: { contentId },
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  }
-);
+>("content/delete", async (contentId) => {
+  const response = await axios.delete(
+    `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/delete`,
+    {
+      data: { contentId },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json", // Explicitly set content type
+      },
+    }
+  );
+  return response.data;
+});
 
 const contentSlice = createSlice({
   name: "content",

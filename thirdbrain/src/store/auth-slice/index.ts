@@ -24,6 +24,9 @@ export const RegisterUser = createAsyncThunk(
       formData,
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Explicitly set content type
+        },
       }
     );
     return response.data;
@@ -41,6 +44,9 @@ export const LoginUser = createAsyncThunk(
       formData,
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Explicitly set content type
+        },
       }
     );
     console.log(response);
@@ -55,9 +61,11 @@ export const LogoutUser = createAsyncThunk<AuthResponse>(
   async () => {
     const response = await axios.post<AuthResponse>(
       `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/logout`,
-      {},
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Explicitly set content type
+        },
       }
     );
     return response.data;
@@ -75,6 +83,7 @@ export const CheckAuthentication = createAsyncThunk(
         headers: {
           "Cache-Control":
             "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Content-Type": "application/json", // Explicitly set content type
         },
       }
     );
