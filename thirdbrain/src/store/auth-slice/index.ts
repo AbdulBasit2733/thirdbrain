@@ -28,6 +28,8 @@ export const RegisterUser = createAsyncThunk(
 export const LoginUser = createAsyncThunk(
   "/auth/login",
   async (formData: LoginUserArgs) => {
+    console.log(formData);
+    
     const response = await axios.post<AuthResponse>(
       `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/login`,
       formData,
@@ -35,6 +37,8 @@ export const LoginUser = createAsyncThunk(
         withCredentials: true,
       }
     );
+    console.log(response);
+    
     return response.data;
   }
 );

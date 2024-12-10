@@ -80,7 +80,8 @@ UserRouter.post(
 UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
   try {
     const bodyData = req.body;
-
+    console.log(bodyData);
+    
     // Check if User Exists
     const user = await UserModel.findOne({ username: bodyData.username });
     if (!user) {

@@ -15,17 +15,14 @@ const Signin = () => {
   const handleSignin = async () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
+    console.log(username, password);
+    
     if (!username || !password) {
       toast.error("Please enter both username and password.");
-      return; // Early exit if username or password is missing
+      return;
     }
-
-    // Create the formData object
-  
-    // Dispatch the LoginUser action
     const resultAction = await dispatch(LoginUser({ username, password }));
 
-    // Handle the result from LoginUser (fulfilled/rejected action)
     if (LoginUser.fulfilled.match(resultAction)) {
       if (resultAction.payload.success) {
         toast.success(resultAction.payload.message);
