@@ -13,11 +13,13 @@ dotenv.config();
 
 // Environment variables
 const MONGODB_URL: string = process.env.MONGODB_URL || "";
-const PORT: number = parseInt(process.env.PORT || "4000", 10);
+const PORT: number = process.env.PORT || 3000;
 
 // Validate MongoDB URL
 if (!MONGODB_URL) {
-  console.error("Error: MONGODB_URL is undefined. Please check your .env file.");
+  console.error(
+    "Error: MONGODB_URL is undefined. Please check your .env file."
+  );
   process.exit(1);
 }
 
