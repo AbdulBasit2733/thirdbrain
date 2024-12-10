@@ -6,6 +6,7 @@ declare global {
         DATABASE_URL: string;
         USER_JWT_SECRET:string;
         FRONTEND_URL:string;
+        NODE_ENV:string;
       }
     }
   }

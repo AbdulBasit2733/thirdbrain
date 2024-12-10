@@ -38,7 +38,8 @@ const CreateContentModal: React.FC<CreateContentModalProps> = ({ open, onClose }
       const response = await dispatch(
         createContent({ title, link, type, tagTitle })
       );
-
+      console.log(response);
+      
       if (response.payload.success) {
         toast.success(response.payload.message);
         onClose(false);

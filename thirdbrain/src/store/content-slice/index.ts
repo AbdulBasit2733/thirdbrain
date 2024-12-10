@@ -29,7 +29,9 @@ export const allContents = createAsyncThunk(
           headers: {
             "Content-Type": "application/json", // Explicitly set content type
           },
-        }
+          
+        },
+        
       );
       return response.data;
     } catch (error) {

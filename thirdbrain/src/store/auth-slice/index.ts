@@ -6,7 +6,7 @@ import {
   AuthResponse,
   LoginUserArgs,
   RegisterUserArgs,
-} from "../../types/types"; // Adjust the path as needed
+} from "../../types/types";
 
 const initialState: InitialStateProps = {
   isLoading: false,
@@ -37,7 +37,6 @@ export const RegisterUser = createAsyncThunk(
 export const LoginUser = createAsyncThunk(
   "/auth/login",
   async (formData: LoginUserArgs) => {
-
     const response = await axios.post<AuthResponse>(
       `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/users/login`,
       formData,
@@ -48,7 +47,6 @@ export const LoginUser = createAsyncThunk(
         },
       }
     );
-
     return response.data;
   }
 );
@@ -79,9 +77,8 @@ export const CheckAuthentication = createAsyncThunk(
       {
         withCredentials: true,
         headers: {
-          "Cache-Control":
-            "no-store, no-cache, must-revalidate, proxy-revalidate",
-          "Content-Type": "application/json", // Explicitly set content type
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -103,28 +100,22 @@ const authSlice = createSlice({
       .addCase(RegisterUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(
-        RegisterUser.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
-          state.isLoading = false;
-          state.user = action.payload.user || null;
-          state.isAuthenticated = action.payload.success;
-        }
-      )
+      .addCase(RegisterUser.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        state.isLoading = false;
+        state.user = action.payload.user || null;
+        state.isAuthenticated = action.payload.success;
+      })
       .addCase(RegisterUser.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(LoginUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(
-        LoginUser.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
-          state.isLoading = false;
-          state.user = action.payload.user || null;
-          state.isAuthenticated = action.payload.success;
-        }
-      )
+      .addCase(LoginUser.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        state.isLoading = false;
+        state.user = action.payload.user || null;
+        state.isAuthenticated = action.payload.success;
+      })
       .addCase(LoginUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
@@ -133,14 +124,11 @@ const authSlice = createSlice({
       .addCase(CheckAuthentication.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(
-        CheckAuthentication.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
-          state.isLoading = false;
-          state.user = action.payload.user || null;
-          state.isAuthenticated = action.payload.success;
-        }
-      )
+      .addCase(CheckAuthentication.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        state.isLoading = false;
+        state.user = action.payload.user || null;
+        state.isAuthenticated = action.payload.success;
+      })
       .addCase(CheckAuthentication.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
@@ -161,5 +149,4 @@ const authSlice = createSlice({
 });
 
 export const { setUser } = authSlice.actions;
-
 export default authSlice.reducer;

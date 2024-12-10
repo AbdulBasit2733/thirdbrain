@@ -17,20 +17,15 @@ const Signup = () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
 
-    // Ensure username and password are not undefined
     if (!username || !password) {
       toast.error("Please enter both username and password.");
-      return; // Early exit if username or password is missing
+      return; 
     }
-
-    // Create the formData object
     const formData = { username, password };
 
     try {
-      // Dispatch the RegisterUser action with formData and await the result
       const resultAction = await dispatch(RegisterUser(formData));
 
-      // Check if the action was fulfilled
       if (RegisterUser.fulfilled.match(resultAction)) {
         if (resultAction.payload.success) {
           toast.success(resultAction.payload.message);
@@ -41,7 +36,6 @@ const Signup = () => {
           toast.error(resultAction.payload.message);
         }
       } else {
-        // Handle rejected action (if any)
         toast.error("Signup failed. Please try again.");
       }
     } catch (error) {

@@ -107,7 +107,7 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
         id: user._id,
       },
       USER_JWT_SECRET,
-      { expiresIn: "1h" } // Optional: Token expiration
+      { expiresIn: "7d" }
     );
 
     // Set Cookie
@@ -115,7 +115,7 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
       .cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite:'strict'
       })
       .status(200)
       .json({

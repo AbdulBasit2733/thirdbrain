@@ -13,6 +13,7 @@ export const AuthMiddleware = async (
 ): Promise<void> => {
   try {
     const token = req.cookies?.token;
+    console.log(token);
 
     if (!token) {
       res.status(401).json({
@@ -23,7 +24,10 @@ export const AuthMiddleware = async (
     }
 
     // Synchronous verification
-    const decodedData = jwt.verify(token, process.env.USER_JWT_SECRET!) as JwtPayload;
+    const decodedData = jwt.verify(
+      token,
+      process.env.USER_JWT_SECRET!
+    ) as JwtPayload;
 
     if (!decodedData || !decodedData.id) {
       res.status(403).json({
