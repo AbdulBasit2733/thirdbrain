@@ -26,13 +26,19 @@ const Header: React.FC = () => {
   const handleShareBrain = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASEURL || "http://localhost:3000"}/api/v1/content/brain/share`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/content/brain/share`,
         { share: true },
         { withCredentials: true }
       );
-      const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
-      await window.navigator.clipboard.writeText(shareUrl);
-      toast.success("Copied the URL");
+      if (!process.env.VITE_FRONTEND_URL) {
+        const shareUrl = `${process.env.VITE_FRONTEND_URL}/share/${response.data.hash}`;
+        await window.navigator.clipboard.writeText(shareUrl);
+        toast.success("Copied the URL");
+      } else {
+        const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
+        await window.navigator.clipboard.writeText(shareUrl);
+        toast.success("Copied the URL");
+      }
     } catch (error: any) {
       console.error(error);
       toast.error(error?.message || "An error occurred");
@@ -43,7 +49,7 @@ const Header: React.FC = () => {
     try {
       const result = await dispatch(LogoutUser());
       const payload = result.payload as AuthResponse; // Type assertion to ensure payload shape
-  
+
       if (payload.success) {
         toast.success(payload.message || "Logout successful");
       } else {

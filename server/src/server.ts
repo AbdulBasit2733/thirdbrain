@@ -25,22 +25,40 @@ if (!MONGODB_URL) {
 
 const app: Application = express();
 
-// Middleware setup
 app.use(express.json());
+
+const allowedOrigins = [
+  'http://localhost:5173', // Local development
+  'https://thirdbrain-frontend.onrender.com', // Deployed frontend
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
-    ],
-    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // Allow cookies and credentials
   })
 );
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, OPTIONS'
+  );
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-Requested-With'
+  );
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(204); // No Content
+});
+
+
 app.use(cookieParser());
 
 // API Routes
