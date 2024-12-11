@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken";
 import z from "zod";
 import { AuthMiddleware } from "../Middleware/AuthMiddleware";
 import { setCookie } from "../utils/features";
+import dotenv from "dotenv";
+dotenv.config();
 
 const UserRouter: Router = express.Router();
-const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 
 // Registration Route
 UserRouter.post(
@@ -83,10 +84,11 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
     // Check if User Exists
     const user = await UserModel.findOne({ username: bodyData.username });
     if (!user) {
-      return res.status(411).json({
+      res.status(411).json({
         success: false,
         message: "Invalid username or password",
       });
+      return;
     }
 
     // Check Password
@@ -95,20 +97,26 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
       user.password
     );
     if (!isMatchedPassword) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         message: "Invalid username or password",
       });
+      return;
     }
 
     // Generate JWT Token
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      USER_JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // const token = jwt.sign(
+    //   {
+    //     id: user._id,
+    //   },
+    //   process.env.USER_JWT_SECRET,
+    //   { expiresIn: "7d" }
+    // );
+    // res.setHeader("Authorization", `Bearer ${token}`).status(200).json({
+    //   success: true,
+    //   message: "Login Successfully",
+    // });
+    // return;
     setCookie(
       { _id: user._id, username: user.username },
       res,
@@ -131,14 +139,19 @@ UserRouter.post("/logout", async (req, res) => {
   });
 });
 
-UserRouter.get("/check-auth", AuthMiddleware, async (req, res) => {
-  //@ts-ignore
-  const user = req.user;
-  res.status(200).json({
-    success: true,
-    message: "Authenticated user!",
-    user,
-  });
-});
+UserRouter.get(
+  "/check-auth",
+  AuthMiddleware,
+  async (req: Request, res: Response) => {
+    //@ts-ignore
+    const user = req.user;
+    res.status(200).json({
+      success: true,
+      message: "Authenticated user!",
+      user,
+    });
+    return;
+  }
+);
 
 export default UserRouter;

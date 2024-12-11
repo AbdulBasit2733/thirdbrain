@@ -15,8 +15,7 @@ const Signin = () => {
   const handleSignin = async () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
-    console.log(username, password);
-    
+  
     if (!username || !password) {
       toast.error("Please enter both username and password.");
       return;

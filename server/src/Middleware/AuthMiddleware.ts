@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import UserModel from "../Models/User";
-
+import dotenv from 'dotenv';
+dotenv.config();
 export const AuthMiddleware = async (
   req: Request,
   res: Response,
@@ -9,7 +10,13 @@ export const AuthMiddleware = async (
 ): Promise<void> => {
   try {
     const token = req.cookies.token;
-    console.log(token);
+    // const authHeader = req.headers.authorization;
+    // if (!authHeader) {
+    //   res.status(401).json({ message: "No token provided" });
+    //   return;
+    // }
+    // const token = authHeader.split(" ")[1];
+    // console.log(authHeader);
 
     if (!token) {
       res.status(401).json({

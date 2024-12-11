@@ -1,5 +1,7 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+dotenv.config();
 export const setCookie = (
   user: {
     _id: any;
@@ -9,7 +11,9 @@ export const setCookie = (
   message: string,
   statusCode = 200
 ) => {
-  const token = jwt.sign({ _id: user._id }, process.env.USER_JWT_SECRET);
+  const token = jwt.sign({ _id: user._id }, process.env.USER_JWT_SECRET, {
+    expiresIn: "7d",
+  });
   res
     .status(statusCode)
     .cookie("token", token, {

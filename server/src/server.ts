@@ -33,6 +33,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL, // Deployed frontend
 ];
 
+// app.use(cors())
+
 app.use(
   cors({
     origin: allowedOrigins,
