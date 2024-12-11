@@ -2,17 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import UserModel from "../Models/User";
 
-interface AuthenticatedRequest extends Request {
-  user?: any; // You can replace `any` with the actual user type if you have a User interface/model.
-}
-
 export const AuthMiddleware = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.cookies?.token;
+    const token = req.cookies.token;
     console.log(token);
 
     if (!token) {
@@ -45,9 +41,9 @@ export const AuthMiddleware = async (
       });
       return;
     }
-
-    req.user = user; // Attach user to the request object
-    next(); // Proceed to the next middleware
+    //@ts-ignore
+    req.user = user;
+    next();
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
       res.status(401).json({

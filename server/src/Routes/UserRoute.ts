@@ -4,10 +4,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import z from "zod";
 import { AuthMiddleware } from "../Middleware/AuthMiddleware";
+import { setCookie } from "../utils/features";
 
 const UserRouter: Router = express.Router();
-const USER_JWT_SECRET =
-  process.env.USER_JWT_SECRET || "ndhcydhshiueh1298431dh7d73";
+const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 
 // Registration Route
 UserRouter.post(
@@ -109,22 +109,12 @@ UserRouter.post("/login", async (req: Request, res: Response): Promise<any> => {
       USER_JWT_SECRET,
       { expiresIn: "7d" }
     );
-
-    // Set Cookie
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite:'strict'
-      })
-      .status(200)
-      .json({
-        success: true,
-        message: "Logged in successfully",
-        user: {
-          username: user.username,
-        },
-      });
+    setCookie(
+      { _id: user._id, username: user.username },
+      res,
+      `Welcome Back, ${user.username}`,
+      200
+    );
   } catch (error) {
     console.error(error);
     res.status(500).json({
