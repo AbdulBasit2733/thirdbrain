@@ -49,25 +49,48 @@ const jwt = __importStar(require("jsonwebtoken"));
 const config_1 = require("../config/config");
 const User_1 = __importDefault(require("../Model/User"));
 const AuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const token = req.cookies.token;
+        // Retrieve the token from cookies
+        const token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.token;
+        console.log(token);
         if (!token) {
             res.status(401).json({
                 success: false,
-                message: "Unauthorize",
+                message: "Unauthorized access. Token not provided.",
             });
             return;
         }
+        // Verify the token and extract payload
         const decodedData = jwt.verify(token, config_1.USER_JWT_SECRET);
-        const user = yield User_1.default.findById(decodedData.id).select('-password');
+        // Fetch user details and attach them to the request object
+        const user = yield User_1.default.findById(decodedData.id).select("-password");
+        if (!user) {
+            res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+            return;
+        }
+        // Attach user information to the request object
         //@ts-ignore
         req.user = user;
+        // Proceed to the next middleware
         next();
     }
     catch (error) {
-        console.log(error);
-        res.status(400).json({
-            message: "Bad Request",
+        console.error("Authentication error:", error);
+        // Handle token-related errors
+        if (error instanceof jwt.JsonWebTokenError) {
+            res.status(403).json({
+                success: false,
+                message: "Invalid or expired token.",
+            });
+            return;
+        }
+        res.status(500).json({
+            success: false,
+            message: "Internal server error.",
         });
         return;
     }

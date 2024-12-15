@@ -13,7 +13,13 @@ const PORT = 3000;
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
 
 app.use("/api/v1/users", UserRoute);
 app.use("/api/v1/contents", ContentRoute);

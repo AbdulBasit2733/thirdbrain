@@ -117,7 +117,7 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
         else {
             const isMatchedPassword = yield bcrypt_1.default.compare(bodyData.password, user.password);
             if (!isMatchedPassword) {
-                res.status(300).json({
+                res.status(400).json({
                     success: false,
                     message: "Username or password is incorrect",
                 });
@@ -125,12 +125,16 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
             const token = jwt.sign({
                 id: user._id,
-            }, config_1.USER_JWT_SECRET);
-            res.cookie("token", token).status(200).json({
-                success: true,
-                message: "LoggedIn Successfully",
-                username: user.username,
+            }, config_1.USER_JWT_SECRET, { expiresIn: "1d" });
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false, // Set to true only for HTTPS in production
+                sameSite: "none", // Or "none" if testing cross-origin cookies
+                maxAge: 24 * 60 * 60 * 1000, // 1 day
             });
+            res
+                .status(200)
+                .json({ success: true, message: "Logged in successfully" });
             return;
         }
     }
@@ -148,7 +152,7 @@ router.get("/auth/check-auth", AuthMiddleware_1.default, (req, res) => {
     res.status(200).json({
         success: true,
         message: "Authenticated Successfully",
-        username: user.username
+        username: user.username,
     });
 });
 exports.default = router;

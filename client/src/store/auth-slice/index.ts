@@ -61,7 +61,10 @@ export const checkAuthentication = createAsyncThunk<AuthResponse>(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URL}/api/v1/users/auth/check-auth`
+        `${VITE_BACKEND_URL}/api/v1/users/auth/check-auth`,
+        {
+          withCredentials: true,
+        }
       );
       console.log(response.data);
       return response.data;
@@ -107,13 +110,23 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state) => {
         state.isLoading = false;
         (state.isAuthenticated = false), (state.username = null);
-      }).addCase(checkAuthentication.pending, (state) => {
+      })
+      .addCase(checkAuthentication.pending, (state) => {
         state.isLoading = true;
-      }).addCase(checkAuthentication.fulfilled, (state, action) => {
+      })
+      .addCase(checkAuthentication.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = action.payload.success === true ? true : false;
-        state.username = action.payload.success === true ? action.payload.username ?? null : null
+        state.username =
+          action.payload.success === true
+            ? action.payload.username ?? null
+            : null;
       })
+      .addCase(checkAuthentication.rejected, (state) => {
+        state.isLoading = false;
+        state.username = null;
+        state.isAuthenticated = false;
+      });
   },
 });
 
