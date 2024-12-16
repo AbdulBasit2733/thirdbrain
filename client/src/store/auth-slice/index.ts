@@ -20,7 +20,10 @@ export const registerUser = createAsyncThunk<AuthResponse, formProps>(
     try {
       const response = await axios.post<AuthResponse>(
         `${VITE_BACKEND_URL}/api/v1/users/auth/register`,
-        userData
+        userData,
+        {
+          withCredentials: true,
+        }
       );
       console.log(response.data);
 
@@ -41,7 +44,10 @@ export const loginUser = createAsyncThunk<AuthResponse, formProps>(
     try {
       const response = await axios.post<AuthResponse>(
         `${VITE_BACKEND_URL}/api/v1/users/auth/login`,
-        userData
+        userData,
+        {
+          withCredentials: true,
+        }
       );
       console.log(response.data);
 
@@ -56,6 +62,30 @@ export const loginUser = createAsyncThunk<AuthResponse, formProps>(
     }
   }
 );
+export const logoutUser = createAsyncThunk<AuthResponse>(
+  "/user/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${VITE_BACKEND_URL}/api/v1/users/auth/logout`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+
+      return response.data; // Assumes the response conforms to the AuthResponse type
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || {
+          success: false,
+          message: "Login failed",
+        }
+      );
+    }
+  }
+);
+
 export const checkAuthentication = createAsyncThunk<AuthResponse>(
   "user/checkAuth",
   async (_, { rejectWithValue }) => {
@@ -123,6 +153,14 @@ const authSlice = createSlice({
             : null;
       })
       .addCase(checkAuthentication.rejected, (state) => {
+        state.isLoading = false;
+        state.username = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.username = null;
         state.isAuthenticated = false;

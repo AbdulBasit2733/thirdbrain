@@ -2,9 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import * as dotenv from "dotenv";
 import UserRoute from "./Route/UserRoute";
 import ContentRoute from "./Route/ContentRoute";
+
+dotenv.config();
 
 const MONGODB_URL =
   "mongodb+srv://abdulbasitkhan8669:cJvKAQk1d80AeJ1f@second-brain-cluster.iszs7.mongodb.net/thirdbrain";

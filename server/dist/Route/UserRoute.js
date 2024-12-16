@@ -126,16 +126,18 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
             const token = jwt.sign({
                 id: user._id,
             }, config_1.USER_JWT_SECRET, { expiresIn: "1d" });
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: false, // Set to true only for HTTPS in production
-                sameSite: "none", // Or "none" if testing cross-origin cookies
-                maxAge: 24 * 60 * 60 * 1000, // 1 day
-            });
             res
                 .status(200)
-                .json({ success: true, message: "Logged in successfully" });
-            return;
+                .cookie("token", token, {
+                httpOnly: true,
+                maxAge: 15 * 60 * 1000,
+                // sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+                // secure: process.env.NODE_ENV === "development" ? false : true,
+            })
+                .json({
+                success: true,
+                message: "LoggedIn Successfully",
+            });
         }
     }
     catch (error) {
@@ -145,6 +147,12 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
             message: "Internal Server Error",
         });
     }
+}));
+router.post("/auth/logout", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).clearCookie("token").json({
+        success: true,
+        message: "Logout Successfully",
+    });
 }));
 router.get("/auth/check-auth", AuthMiddleware_1.default, (req, res) => {
     //@ts-ignore

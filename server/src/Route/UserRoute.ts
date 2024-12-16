@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response } from "express";
 import UserModel from "../Model/User";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -102,18 +102,18 @@ router.post("/auth/login", async (req, res) => {
         USER_JWT_SECRET,
         { expiresIn: "1d" }
       );
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false, // Set to true only for HTTPS in production
-        sameSite: "none", // Or "none" if testing cross-origin cookies
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-      });
       res
         .status(200)
-        .json({ success: true, message: "Logged in successfully" });
-
-      return;
+        .cookie("token", token, {
+          httpOnly: true,
+          maxAge: 15 * 60 * 1000,
+          // sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+          // secure: process.env.NODE_ENV === "development" ? false : true,
+        })
+        .json({
+          success: true,
+          message: "LoggedIn Successfully",
+        });
     }
   } catch (error) {
     console.log(error);
@@ -124,10 +124,16 @@ router.post("/auth/login", async (req, res) => {
   }
 });
 
+router.post("/auth/logout", async (req, res) => {
+  res.status(200).clearCookie("token").json({
+    success: true,
+    message: "Logout Successfully",
+  });
+});
+
 router.get("/auth/check-auth", AuthMiddleware, (req, res) => {
   //@ts-ignore
   const user = req.user;
-
   res.status(200).json({
     success: true,
     message: "Authenticated Successfully",

@@ -2,17 +2,21 @@
 import { toast } from "react-toastify";
 import ShareIcon from "./Icons/ShareIcon";
 import DeleteIcon from "./Icons/DeleteIcon";
+import { useAppDispatch } from "../hooks/hooks";
+import { deleteContent, myContents } from "../store/content-slice";
 
 interface CardProps {
-  contentId: string;
-  title: string;
-  link: string;
-  type: "twitter" | "youtube";
-  username: string;
-  tags: Array<any>;
+  contentId: string | null;
+  title: string | null;
+  link: string | null;
+  type: "twitter" | "youtube" | null | string;
+  username: string | null;
+  tags: Array<any> | [];
 }
 
 const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
+
+  const dispatch = useAppDispatch();
 
   const normalizedLink =
     typeof link === "string" ? link.replace("x.com", "twitter.com") : "";
@@ -24,6 +28,14 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
   const handleDelete = async () => {
     try {
       console.log(contentId);
+      dispatch(deleteContent(contentId)).then((data) => {
+        if(data.payload.success){
+          toast.success(data.payload.message);
+          dispatch(myContents())
+        }else{
+          toast.error(data.payload.message)
+        }
+      })
       
     } catch (error) {
       toast.error("Something went wrong!");

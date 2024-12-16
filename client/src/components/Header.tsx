@@ -2,9 +2,13 @@ import Button from "./Button";
 import ShareIcon from "./Icons/ShareIcon";
 import ProfileIcon from "./Icons/ProfileIcon";
 import LogoutIcon from "./Icons/LogoutIcon";
-
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { logoutUser } from "../store/auth-slice";
+import { toast } from "react-toastify";
 
 const Header = () => {
+  const { username } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   return (
     <div className="flex gap-3 items-center justify-end border-b border-slate-100 p-3">
       <Button
@@ -14,17 +18,25 @@ const Header = () => {
       />
       <Button
         startIcon={<ProfileIcon />}
-        text={'testuser'}
+        text={username ? username : "null"}
         variant="secondary"
       />
 
       <div className="px-5">
         <Button
+          onClick={() => {
+            dispatch(logoutUser()).then((data) => {
+              if (data.payload.success) {
+                toast.success(data.payload.message);
+              } else {
+                toast.error("Logout Failed");
+              }
+            });
+          }}
           startIcon={<LogoutIcon />}
           text={"Logout"}
           variant="primary"
           fullWidth={true}
-          
         />
       </div>
       {/* <div className="relative">

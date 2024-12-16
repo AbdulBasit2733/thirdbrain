@@ -3,7 +3,6 @@ import Signin from "./pages/Auth/Signin";
 import Signup from "./pages/Auth/Signup";
 import AuthLayout from "./components/Auth/AuthLayout";
 import Layout from "./components/Layout";
-import Dasboard from "./pages/Dasboard";
 import Youtube from "./pages/Youtube";
 import Twitter from "./pages/Twitter";
 import Document from "./pages/Document";
@@ -13,6 +12,7 @@ import Loading from "./components/Loading";
 import { useEffect } from "react";
 import { checkAuthentication } from "./store/auth-slice";
 import { toast } from "react-toastify";
+import Dashboard from "./pages/Dasboard";
 
 const App = () => {
   const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
@@ -20,13 +20,7 @@ const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(checkAuthentication()).then((data) => {
-      if (data.payload.success) {
-        toast.success(data.payload.message);
-      } else {
-        toast.error(data.payload.message);
-      }
-    });
+    dispatch(checkAuthentication());
   }, [dispatch]);
 
   return (
@@ -54,7 +48,7 @@ const App = () => {
               </CheckAuth>
             }
           >
-            <Route path="/" element={<Dasboard />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/youtube-contents" element={<Youtube />} />
             <Route path="/twitter-contents" element={<Twitter />} />
             <Route path="/doc-contents" element={<Document />} />
