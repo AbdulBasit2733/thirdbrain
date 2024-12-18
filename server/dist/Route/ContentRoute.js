@@ -126,36 +126,55 @@ router.delete("/delete-content/:id", AuthMiddleware_1.default, (req, res) => __a
     }
 }));
 router.post("/brain/sharelink/create", AuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const share = req.body.share;
-    if (share) {
-        const existingLink = yield Link_1.default.findOne({
-            //@ts-ignore
-            userId: req.user._id,
-        });
-        if (existingLink) {
-            res.status(200).json({
-                hash: existingLink.hash,
+    try {
+        const { share } = req.body;
+        if (typeof share !== "boolean") {
+            res.status(400).json({
+                success: false,
+                message: "Invalid 'share' value. It must be a boolean.",
             });
             return;
         }
-        const hash = (0, config_1.RandomLink)(10);
-        yield Link_1.default.create({
-            //@ts-ignore
-            userId: req.user._id,
-            hash: hash,
-        });
-        res.status(200).json({
-            message: "/share/" + hash,
-        });
+        //@ts-ignore
+        const userId = req.user._id;
+        if (share) {
+            // Check if a share link already exists
+            const existingLink = yield Link_1.default.findOne({ userId });
+            if (existingLink) {
+                res.status(200).json({
+                    success: true,
+                    message: "Share Link Already Exists",
+                    hash: existingLink.hash,
+                });
+                return;
+            }
+            // Create a new share link
+            const hash = (0, config_1.RandomLink)(10);
+            yield Link_1.default.create({ userId, hash });
+            res.status(201).json({
+                success: true,
+                message: "Share Link Created",
+                link: `/share/${hash}`,
+            });
+            return;
+        }
+        else {
+            // Remove existing share link
+            yield Link_1.default.deleteOne({ userId });
+            res.status(200).json({
+                success: true,
+                message: "Share Link Removed",
+            });
+            return;
+        }
     }
-    else {
-        yield Link_1.default.deleteOne({
-            //@ts-ignore
-            userId: req.user._id,
+    catch (error) {
+        console.error("Error creating or removing share link:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error. Please try again later.",
         });
-        res.status(200).json({
-            message: "Remove Link",
-        });
+        return;
     }
 }));
 router.get("/brain/:shareLink", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -163,13 +182,16 @@ router.get("/brain/:shareLink", (req, res) => __awaiter(void 0, void 0, void 0, 
     const link = yield Link_1.default.findOne({ hash: hash });
     if (!link) {
         res.status(411).json({
+            success: false,
             message: "Sorry Incorrect Input",
         });
         return;
     }
     const content = yield Content_1.default.find({
         userId: link.userId,
-    });
+    })
+        .populate("userId", "-password")
+        .populate("tags");
     if (content.length === 0) {
         res.status(411).json({
             success: false,
@@ -180,12 +202,13 @@ router.get("/brain/:shareLink", (req, res) => __awaiter(void 0, void 0, void 0, 
     const user = yield User_1.default.findOne({ _id: link.userId }).select("-password");
     if (!user) {
         res.status(411).json({
+            success: false,
             message: "User Not Found",
         });
         return;
     }
     res.status(200).json({
-        username: user === null || user === void 0 ? void 0 : user.username,
+        success: true,
         content: content,
     });
 }));

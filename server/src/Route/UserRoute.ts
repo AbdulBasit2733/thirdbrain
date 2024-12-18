@@ -106,9 +106,9 @@ router.post("/auth/login", async (req, res) => {
         .status(200)
         .cookie("token", token, {
           httpOnly: true,
-          maxAge: 15 * 60 * 1000,
-          // sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-          // secure: process.env.NODE_ENV === "development" ? false : true,
+          maxAge: 1000 * 60 * 60 * 24 * 1,
+          sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+          secure: process.env.NODE_ENV === "development" ? false : true,
         })
         .json({
           success: true,
@@ -125,10 +125,25 @@ router.post("/auth/login", async (req, res) => {
 });
 
 router.post("/auth/logout", async (req, res) => {
-  res.status(200).clearCookie("token").json({
-    success: true,
-    message: "Logout Successfully",
-  });
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+      secure: process.env.NODE_ENV === "development" ? false : true,
+    });
+
+  
+    res.status(200).json({
+      success: true,
+      message: "Logout Successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred during logout",
+    });
+  }
 });
 
 router.get("/auth/check-auth", AuthMiddleware, (req, res) => {

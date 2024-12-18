@@ -6,7 +6,7 @@ import { useAppDispatch } from "../../hooks/hooks";
 import { loginUser } from "../../store/auth-slice";
 import { toast } from "react-toastify";
 
-const Signin = () => {
+const ForgotPassword = () => {
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const dispatch = useAppDispatch();
@@ -30,7 +30,7 @@ const Signin = () => {
   return (
     <div className="">
       <h1 className="text-2xl text-center font-extrabold text-orange-500 tracking-wider">
-        SignIn
+        Forgot Password
       </h1>
       <div className="mt-5 bg-white drop-shadow-2xl px-5 py-8 rounded-lg flex flex-col gap-3">
         <div className="space-y-2">
@@ -41,19 +41,15 @@ const Signin = () => {
           <label className="tracking-wider">Password</label>
           <Input refs={passwordRef} placeholder="Password" type="password" />
         </div>
-        <div className="mb-2 flex justify-end text-xs tracking-wider text-orange-500 font-semibold">
-          <Link to={"/auth/forgot-password"}>Forget Password ?</Link>
+        <div className="space-y-2">
+          <label className="tracking-wider">Confirm Password</label>
+          <Input refs={passwordRef} placeholder="Password" type="password" />
         </div>
         <Button onClick={handleSignin} variant="primary" text={"Signin"} />
-        <div className="mt-5 flex flex-col gap-2 justify-center items-center text-xs tracking-wider font-semibold">
-          Don't have an account ?
-          <Link className="text-orange-500" to={"/auth/signup"}>
-            Signup
-          </Link>
-        </div>
+        <Link to={'/auth/signin'} className="text-xl text-orange-400 font-bold bg-white rounded-md shadow-md">Go Back</Link>
       </div>
     </div>
   );
 };
 
-export default Signin;
+export default ForgotPassword;

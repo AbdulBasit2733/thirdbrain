@@ -121,35 +121,60 @@ router.delete("/delete-content/:id", AuthMiddleware, async (req, res) => {
 });
 
 router.post("/brain/sharelink/create", AuthMiddleware, async (req, res) => {
-  const share = req.body.share;
-  if (share) {
-    const existingLink = await LinkModel.findOne({
-      //@ts-ignore
-      userId: req.user._id,
-    });
-    if (existingLink) {
-      res.status(200).json({
-        hash: existingLink.hash,
+  try {
+    const { share } = req.body;
+
+    if (typeof share !== "boolean") {
+      res.status(400).json({
+        success: false,
+        message: "Invalid 'share' value. It must be a boolean.",
       });
       return;
     }
-    const hash = RandomLink(10);
-    await LinkModel.create({
-      //@ts-ignore
-      userId: req.user._id,
-      hash: hash,
+
+    //@ts-ignore
+    const userId = req.user._id;
+
+    if (share) {
+      // Check if a share link already exists
+      const existingLink = await LinkModel.findOne({ userId });
+
+      if (existingLink) {
+        res.status(200).json({
+          success: true,
+          message: "Share Link Already Exists",
+          hash: existingLink.hash,
+        });
+        return;
+      }
+
+      // Create a new share link
+      const hash = RandomLink(10);
+      await LinkModel.create({ userId, hash });
+
+      res.status(201).json({
+        success: true,
+        message: "Share Link Created",
+        link: `/share/${hash}`,
+      });
+      return;
+    } else {
+      // Remove existing share link
+      await LinkModel.deleteOne({ userId });
+
+      res.status(200).json({
+        success: true,
+        message: "Share Link Removed",
+      });
+      return;
+    }
+  } catch (error) {
+    console.error("Error creating or removing share link:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later.",
     });
-    res.status(200).json({
-      message: "/share/" + hash,
-    });
-  } else {
-    await LinkModel.deleteOne({
-      //@ts-ignore
-      userId: req.user._id,
-    });
-    res.status(200).json({
-      message: "Remove Link",
-    });
+    return;
   }
 });
 
@@ -158,13 +183,16 @@ router.get("/brain/:shareLink", async (req, res) => {
   const link = await LinkModel.findOne({ hash: hash });
   if (!link) {
     res.status(411).json({
+      success: false,
       message: "Sorry Incorrect Input",
     });
     return;
   }
   const content = await ContentModel.find({
     userId: link.userId,
-  });
+  })
+    .populate("userId", "-password")
+    .populate("tags");
   if (content.length === 0) {
     res.status(411).json({
       success: false,
@@ -177,12 +205,13 @@ router.get("/brain/:shareLink", async (req, res) => {
   );
   if (!user) {
     res.status(411).json({
+      success: false,
       message: "User Not Found",
     });
     return;
   }
   res.status(200).json({
-    username: user?.username,
+    success: true,
     content: content,
   });
 });

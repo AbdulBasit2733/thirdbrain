@@ -130,9 +130,9 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
                 .status(200)
                 .cookie("token", token, {
                 httpOnly: true,
-                maxAge: 15 * 60 * 1000,
-                // sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-                // secure: process.env.NODE_ENV === "development" ? false : true,
+                maxAge: 1000 * 60 * 60 * 24 * 1,
+                sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+                secure: process.env.NODE_ENV === "development" ? false : true,
             })
                 .json({
                 success: true,
@@ -149,10 +149,26 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 }));
 router.post("/auth/logout", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).clearCookie("token").json({
-        success: true,
-        message: "Logout Successfully",
-    });
+    try {
+        // Clear the token cookie
+        res.clearCookie("token", {
+            httpOnly: true, // If set during cookie creation
+            sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+            secure: process.env.NODE_ENV === "development" ? false : true,
+        });
+        // Respond with success
+        res.status(200).json({
+            success: true,
+            message: "Logout Successfully",
+        });
+    }
+    catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred during logout",
+        });
+    }
 }));
 router.get("/auth/check-auth", AuthMiddleware_1.default, (req, res) => {
     //@ts-ignore

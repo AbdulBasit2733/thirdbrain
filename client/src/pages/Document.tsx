@@ -3,6 +3,7 @@ import Button from "../components/Button";
 import PlusIcon from "../components/Icons/PlusIcon";
 import Card from "../components/Card";
 import CreateContentModal from "../components/CreateContentModal";
+import { ContentProps } from "../store/content-slice/contentTypes";
 
 const Document = () => {
   const [modelOpen, setModelOpen] = useState(false);
@@ -49,24 +50,33 @@ const Document = () => {
             onClose={() => setModelOpen(!open)}
           />
           <div>
-            <h1 className="text-2xl font-bold my-5">Feed</h1>
+            <h1 className="text-2xl font-bold my-5">Documents</h1>
             <div className=" flex gap-3 flex-wrap">
               {!contents || contents.length === 0 ? (
                 <h1 className="text-2xl font-semibold">
                   No Document Content is Available Please Create Content First
                 </h1>
               ) : (
-                contents.map(({ type, title, link, _id, userId, tags }) => (
-                  <Card
-                    contentId={_id}
-                    username={userId.username}
-                    key={_id}
-                    type={type}
-                    title={title}
-                    link={link}
-                    tags={tags}
-                  />
-                ))
+                contents.filter((con) => con.contentType !== "twitter" && con.contentType !== "youtube").map(
+                  ({
+                    _id,
+                    contentLink,
+                    contentType,
+                    title,
+                    tags,
+                    userId,
+                  }: ContentProps) => (
+                    <Card
+                      key={_id}
+                      contentId={_id}
+                      username={userId?.username || null}
+                      type={contentType || null}
+                      title={title}
+                      link={contentLink}
+                      tags={tags ? tags : []}
+                    />
+                  )
+                )
               )}
             </div>
           </div>

@@ -11,8 +11,9 @@ import { useAppDispatch, useAppSelector } from "./hooks/hooks";
 import Loading from "./components/Loading";
 import { useEffect } from "react";
 import { checkAuthentication } from "./store/auth-slice";
-import { toast } from "react-toastify";
 import Dashboard from "./pages/Dasboard";
+import ShareLink from "./pages/ShareLink";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 const App = () => {
   const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
@@ -39,6 +40,7 @@ const App = () => {
           >
             <Route path="signin" element={<Signin />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route
             path="/"
@@ -53,6 +55,7 @@ const App = () => {
             <Route path="/twitter-contents" element={<Twitter />} />
             <Route path="/doc-contents" element={<Document />} />
           </Route>
+          <Route path="/share-content/share/:id" element={<ShareLink />} />
         </Routes>
       )}
     </div>

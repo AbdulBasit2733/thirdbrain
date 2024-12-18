@@ -12,8 +12,22 @@ import { ContentProps } from "../store/content-slice/contentTypes";
 const Dashboard: React.FC = () => {
   const [modelOpen, setModelOpen] = useState(false);
   const { contents, isLoading } = useAppSelector((state) => state.contents);
-  console.log(contents);
-  
+
+  const youtubeData =
+    contents.length > 0 &&
+    contents.filter(
+      (c) => c.contentType !== "twitter" && c.contentType !== "document"
+    );
+  const twitterData =
+    contents.length > 0 &&
+    contents.filter(
+      (c) => c.contentType !== "youtube" && c.contentType !== "document"
+    );
+  const docData =
+    contents.length > 0 &&
+    contents.filter(
+      (c) => c.contentType !== "twitter" && c.contentType !== "youtube"
+    );
 
   const dispatch = useAppDispatch();
 
@@ -38,29 +52,92 @@ const Dashboard: React.FC = () => {
         />
       </div>
       {isLoading ? (
-       <Loading />
+        <Loading />
       ) : (
         <div className="flex-1">
-          <CreateContentModal open={modelOpen} onClose={() => setModelOpen(false)} />
+          <CreateContentModal
+            open={modelOpen}
+            onClose={() => setModelOpen(false)}
+          />
           <div>
             <h1 className="text-2xl font-bold my-5">Feed</h1>
-            <div className="flex gap-3 flex-wrap">
-              {(!contents || contents.length === 0) ? (
+            <div className="w-full">
+              {!contents || contents.length === 0 ? (
                 <h1 className="text-2xl font-semibold">
                   No Content is Available. Please Create Content First.
                 </h1>
               ) : (
-                contents.map(({ _id, contentLink, contentType, title, tags, userId }:ContentProps) => (
-                  <Card
-                    key={_id}
-                    contentId={_id}
-                    username={userId?.username || null}
-                    type={contentType || null}
-                    title={title}
-                    link={contentLink}
-                    tags={tags ? tags : []}
-                  />
-                ))
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {youtubeData &&
+                      youtubeData.map(
+                        ({
+                          _id,
+                          contentLink,
+                          contentType,
+                          title,
+                          tags,
+                          userId,
+                        }: ContentProps) => (
+                          <Card
+                            key={_id}
+                            contentId={_id}
+                            username={userId?.username || null}
+                            type={contentType || null}
+                            title={title}
+                            link={contentLink}
+                            tags={tags ? tags : []}
+                          />
+                        )
+                      )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 my-5">
+                    {twitterData &&
+                      twitterData.map(
+                        ({
+                          _id,
+                          contentLink,
+                          contentType,
+                          title,
+                          tags,
+                          userId,
+                        }: ContentProps) => (
+                          <Card
+                            key={_id}
+                            contentId={_id}
+                            username={userId?.username || null}
+                            type={contentType || null}
+                            title={title}
+                            link={contentLink}
+                            tags={tags ? tags : []}
+                          />
+                        )
+                      )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {docData &&
+                      docData.map(
+                        ({
+                          _id,
+                          contentLink,
+                          contentType,
+                          title,
+                          tags,
+                          userId,
+                        }: ContentProps) => (
+                          <Card
+                            key={_id}
+                            contentId={_id}
+                            username={userId?.username || null}
+                            type={contentType || null}
+                            title={title}
+                            link={contentLink}
+                            tags={tags ? tags : []}
+                          />
+                        )
+                      )}
+                  </div>
+                </>
               )}
             </div>
           </div>

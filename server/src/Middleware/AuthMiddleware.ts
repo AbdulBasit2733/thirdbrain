@@ -13,7 +13,6 @@ const AuthMiddleware = async (
   try {
     // Retrieve the token from cookies
     const token = req.cookies?.token;
-    console.log(token);
     if (!token) {
       res.status(401).json({
         success: false,

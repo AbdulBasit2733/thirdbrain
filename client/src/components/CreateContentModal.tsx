@@ -25,12 +25,12 @@ const CreateContentModal = ({ open, onClose }) => {
       dispatch(createContent({ title, link, tagTitle, type })).then((data) => {
         if (data.payload.success) {
           toast.success(data.payload.message);
-          () => onClose(false);
           dispatch(myContents());
+          onClose();
         }
       });
-    }else{
-      toast.error("All Fields Are Required")
+    } else {
+      toast.error("All Fields Are Required");
     }
   };
   return (

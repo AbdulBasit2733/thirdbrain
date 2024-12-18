@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { VITE_BACKEND_URL } from "../../config/config";
 import { ContentProps } from "./contentTypes";
+import { data } from "react-router-dom";
 
 // Define the type for the initial state
 interface ContentState {
@@ -90,6 +91,31 @@ export const deleteContent = createAsyncThunk(
     }
   }
 );
+
+export const createShareLink = createAsyncThunk(
+  "brain/shareLink",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${VITE_BACKEND_URL}/api/v1/contents/brain/sharelink/create`,
+        { share: true },
+        { withCredentials: true }
+      );
+
+      // Return the response data
+      return response.data;
+    } catch (error: any) {
+      // Properly return error using rejectWithValue
+      return rejectWithValue(
+        error.response?.data || {
+          success: false,
+          message: "Something went wrong.",
+        }
+      );
+    }
+  }
+);
+
 
 // Create the content slice
 const contentSlice = createSlice({

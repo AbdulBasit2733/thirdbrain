@@ -1,21 +1,21 @@
-
 import { toast } from "react-toastify";
 import ShareIcon from "./Icons/ShareIcon";
 import DeleteIcon from "./Icons/DeleteIcon";
 import { useAppDispatch } from "../hooks/hooks";
 import { deleteContent, myContents } from "../store/content-slice";
+import { useEffect } from "react";
+import { TagProps } from "../store/content-slice/contentTypes";
 
 interface CardProps {
-  contentId: string | null;
+  contentId?: string | null;
   title: string | null;
   link: string | null;
   type: "twitter" | "youtube" | null | string;
-  username: string | null;
-  tags: Array<any> | [];
+  username?: string | null;
+  tags: Array<TagProps> | [];
 }
 
 const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
-
   const dispatch = useAppDispatch();
 
   const normalizedLink =
@@ -29,19 +29,32 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
     try {
       console.log(contentId);
       dispatch(deleteContent(contentId)).then((data) => {
-        if(data.payload.success){
+        if (data.payload.success) {
           toast.success(data.payload.message);
-          dispatch(myContents())
-        }else{
-          toast.error(data.payload.message)
+          dispatch(myContents());
+        } else {
+          toast.error(data.payload.message);
         }
-      })
-      
+      });
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
     }
   };
+  useEffect(() => {
+    if (type === "twitter" && normalizedLink) {
+      const script = document.createElement("script");
+      script.src = "https://platform.twitter.com/widgets.js";
+      script.async = true;
+      script.charset = "utf-8";
+      document.body.appendChild(script);
+
+      // Cleanup to prevent duplication
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [type, normalizedLink]);
 
   return (
     <div>
@@ -49,7 +62,7 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
         <div className="p-1 rounded-md">
           {type === "youtube" && youtubeEmbedLink && (
             <iframe
-              className="w-full h-48 sm:h-64 rounded-md"
+              className="w-full max-h-48 sm:min-h-64 rounded-md"
               src={youtubeEmbedLink}
               title="YouTube video player"
               frameBorder="0"
@@ -67,12 +80,12 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
         </div>
         <div className="flex items-center justify-between px-2 py-3">
           <div className="text-gray-500">
-            <h1 className="text-black font-semibold text-sm text-wrap mb-0.5">
+            <h1 className="text-black font-semibold text-ellipsis overflow-hidden text-sm mb-0.5">
               {title}
             </h1>
             <p className="font-normal text-sm">{username}</p>
             {tags && tags.length > 0 ? (
-              <div className="text-xs bg-purple-200 text-indigo-600 font-semibold w-fit px-2 py-1 rounded-md mt-2">
+              <div className="text-xs bg-orange-200 text-orange-500 font-semibold w-fit px-2 py-1 rounded-md mt-2">
                 {tags.map((t) => (
                   <p key={t._id}>{t.title}</p>
                 ))}
@@ -81,7 +94,7 @@ const Card = ({ title, link, type, username, contentId, tags }: CardProps) => {
           </div>
           <div className="flex gap-5 items-center text-gray-500">
             <a
-              href={link}
+              href={link ? link : ""}
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer"

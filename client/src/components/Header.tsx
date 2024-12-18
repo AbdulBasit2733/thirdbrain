@@ -5,16 +5,40 @@ import LogoutIcon from "./Icons/LogoutIcon";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { logoutUser } from "../store/auth-slice";
 import { toast } from "react-toastify";
+import { createShareLink } from "../store/content-slice";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { username } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   return (
     <div className="flex gap-3 items-center justify-end border-b border-slate-100 p-3">
       <Button
         variant="secondary"
         text={"Share Brain"}
         startIcon={<ShareIcon />}
+        onClick={() => {
+          dispatch(createShareLink())
+            .then(async (data) => {
+              if (data.payload.success) {
+                const shareLink =
+                  data.payload.link || `/share/${data.payload.hash}`;
+                await window.navigator.clipboard.writeText(
+                  `http://localhost:5173/share-content${shareLink}`
+                );
+                toast.success("Share link copied to clipboard!");
+                // navigate('/share-content')
+              } else {
+                toast.error(
+                  data.payload.message || "Failed to create share link."
+                );
+              }
+            })
+            .catch(() => {
+              toast.error("An unexpected error occurred.");
+            });
+        }}
       />
       <Button
         startIcon={<ProfileIcon />}
