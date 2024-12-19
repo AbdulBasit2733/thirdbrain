@@ -5,19 +5,18 @@ import cors from "cors";
 import * as dotenv from "dotenv";
 import UserRoute from "./Route/UserRoute";
 import ContentRoute from "./Route/ContentRoute";
-import { FRONTEND_URL } from "./config/config";
 
 dotenv.config();
 
 const MONGODB_URL = `${process.env.MONGODB_URL}/thirdbrain`;
 const PORT = process.env.PORT || 3000;
-
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [`${FRONTEND_URL}`],
+    origin: [FRONTEND_URL],
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
