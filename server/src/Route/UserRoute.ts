@@ -105,14 +105,14 @@ router.post("/auth/login", async (req, res) => {
       res
         .status(200)
         .cookie("token", token, {
-          httpOnly: true,
-          maxAge: 1000 * 60 * 60 * 24 * 1,
-          sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-          secure: process.env.NODE_ENV === "development" ? false : true,
+          httpOnly: true, // Can't be accessed via JavaScript
+          maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day expiration
+          sameSite: "none",
+          secure: process.env.NODE_ENV === "production", // Secure cookies in production only
         })
         .json({
           success: true,
-          message: "LoggedIn Successfully",
+          message: "Logged in successfully",
         });
     }
   } catch (error) {
