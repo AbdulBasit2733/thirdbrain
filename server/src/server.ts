@@ -16,9 +16,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [FRONTEND_URL],
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    credentials: true,
+    origin: "https://thirdbrain-kohl.vercel.app", // Allow this specific origin
+    methods: "GET, POST, PUT, DELETE", // Allowed methods
+    credentials: true, // Include credentials if needed
   })
 );
 
