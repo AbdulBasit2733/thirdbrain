@@ -54,7 +54,7 @@ const UserRoute_1 = __importDefault(require("./Route/UserRoute"));
 const ContentRoute_1 = __importDefault(require("./Route/ContentRoute"));
 dotenv.config();
 const MONGODB_URL = "mongodb+srv://abdulbasitkhan8669:cJvKAQk1d80AeJ1f@second-brain-cluster.iszs7.mongodb.net/thirdbrain";
-const PORT = 3000;
+const PORT = 8000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());

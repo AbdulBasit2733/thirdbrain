@@ -10,7 +10,7 @@ dotenv.config();
 
 const MONGODB_URL =
   "mongodb+srv://abdulbasitkhan8669:cJvKAQk1d80AeJ1f@second-brain-cluster.iszs7.mongodb.net/thirdbrain";
-const PORT = 3000;
+const PORT = 8000;
 
 const app = express();
 app.use(express.json());

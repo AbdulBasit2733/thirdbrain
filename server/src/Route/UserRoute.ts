@@ -126,17 +126,11 @@ router.post("/auth/login", async (req, res) => {
 
 router.post("/auth/logout", async (req, res) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-      secure: process.env.NODE_ENV === "development" ? false : true,
-    });
-
-  
-    res.status(200).json({
+    res.status(200).cookie("token", "").json({
       success: true,
       message: "Logout Successfully",
     });
+    res.end();
   } catch (error) {
     console.error("Logout error:", error);
     res.status(500).json({

@@ -150,17 +150,11 @@ router.post("/auth/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
 }));
 router.post("/auth/logout", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Clear the token cookie
-        res.clearCookie("token", {
-            httpOnly: true, // If set during cookie creation
-            sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-            secure: process.env.NODE_ENV === "development" ? false : true,
-        });
-        // Respond with success
-        res.status(200).json({
+        res.status(200).cookie("token", "").json({
             success: true,
             message: "Logout Successfully",
         });
+        res.end();
     }
     catch (error) {
         console.error("Logout error:", error);
