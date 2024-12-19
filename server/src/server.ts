@@ -12,30 +12,24 @@ const MONGODB_URL = `${process.env.MONGODB_URL}/thirdbrain`;
 const PORT = process.env.PORT || 3000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-export default function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://thirdbrain-kohl.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  // For preflight requests (OPTIONS method)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Your API logic
-  res.status(200).json({ message: 'CORS setup successful' });
-}
-
 
 const app = express();
-app.use(handler)
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://thirdbrain-kohl.vercel.app"); // Frontend URL
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 app.use(
   cors({
     origin: FRONTEND_URL, // Allow this specific origin
     methods: "GET, POST, PUT, DELETE", // Allowed methods
     credentials: true, // Include credentials if needed
+    allowedHeaders: "Content-Type, Authorization",
   })
 );
 

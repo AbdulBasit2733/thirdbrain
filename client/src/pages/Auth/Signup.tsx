@@ -20,7 +20,6 @@ const Signup = () => {
   const handleSignup = () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
-    console.log(username, password);
     if (username && password) {
       dispatch(registerUser({ username, password })).then((data) => {
         if(data.payload.success){

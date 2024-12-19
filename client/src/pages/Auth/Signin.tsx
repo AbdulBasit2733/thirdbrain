@@ -13,7 +13,6 @@ const Signin = () => {
   const handleSignin = () => {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
-    console.log(username, password);
     if (username && password) {
       dispatch(loginUser({ username, password })).then((data) => {
         if (data.payload?.success) {
