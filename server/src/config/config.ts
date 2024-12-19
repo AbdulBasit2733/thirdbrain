@@ -1,4 +1,4 @@
-export const FRONTEND_URL = "https://thirdbrain-kohl.vercel.app"
+
 export const USER_JWT_SECRET = "sdkasdjklcm2378quiowey9827371";
 
 export const RandomLink = (len: Number) => {

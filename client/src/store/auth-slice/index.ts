@@ -23,12 +23,8 @@ export const registerUser = createAsyncThunk<AuthResponse, formProps>(
         userData,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
-
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -49,9 +45,6 @@ export const loginUser = createAsyncThunk<AuthResponse, formProps>(
         userData,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 
@@ -74,9 +67,6 @@ export const logoutUser = createAsyncThunk<AuthResponse>(
         `${VITE_BACKEND_URL}/api/v1/users/auth/logout`,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       return response.data; // Assumes the response conforms to the AuthResponse type
@@ -98,10 +88,7 @@ export const checkAuthentication = createAsyncThunk<AuthResponse>(
       const response = await axios.get(
         `${VITE_BACKEND_URL}/api/v1/users/auth/check-auth`,
         {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true, // Include credentials (cookies)
         }
       );
       return response.data;
@@ -109,12 +96,13 @@ export const checkAuthentication = createAsyncThunk<AuthResponse>(
       return rejectWithValue(
         error.response?.data || {
           success: false,
-          message: "Authentcation Failed",
+          message: "Authentication Failed",
         }
       );
     }
   }
 );
+
 
 const authSlice = createSlice({
   name: "auth",
