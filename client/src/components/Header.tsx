@@ -7,6 +7,7 @@ import { logoutUser } from "../store/auth-slice";
 import { toast } from "react-toastify";
 import { createShareLink } from "../store/content-slice";
 import { useNavigate } from "react-router-dom";
+import { VITE_FRONTEND_URL } from "../config/config";
 
 const Header = () => {
   const { username } = useAppSelector((state) => state.auth);
@@ -25,7 +26,7 @@ const Header = () => {
                 const shareLink =
                   data.payload.link || `/share/${data.payload.hash}`;
                 await window.navigator.clipboard.writeText(
-                  `http://localhost:5173/share-content${shareLink}`
+                  `${VITE_FRONTEND_URL}/share-content${shareLink}`
                 );
                 toast.success("Share link copied to clipboard!");
                 // navigate('/share-content')
