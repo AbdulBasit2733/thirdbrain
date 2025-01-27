@@ -11,7 +11,7 @@ const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Login With Email",
+      name: "email",
       credentials: {
         email: {
           label: "Email",
@@ -62,7 +62,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/signin", // Custom sign-in page
+    signIn: "/auth/signIn", // Custom sign-in page
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -88,4 +88,5 @@ const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-export default handler;
+export const GET = handler;
+export const POST = handler;

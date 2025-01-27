@@ -1,14 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Eye, EyeOff, Check, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/Button";
-import { Input } from "@/app/components/ui/Input";
+import  {Input}  from "@/app//components/ui/Input";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import axios from "axios";
 
-const Signin = () => {
+interface PasswordRequirement {
+  regex: RegExp;
+  text: string;
+}
+
+const Signup = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,7 +22,16 @@ const Signin = () => {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const passwordRequirements: PasswordRequirement[] = [
+    { regex: /.{8,}/, text: "At least 8 characters long" },
+    { regex: /[A-Z]/, text: "Contains uppercase letter" },
+    { regex: /[a-z]/, text: "Contains lowercase letter" },
+    { regex: /[0-9]/, text: "Contains number" },
+    { regex: /[#?!@$%^&*-]/, text: "Contains special character" },
+  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,15 +39,23 @@ const Signin = () => {
     setError(null);
   };
 
-  const handleSignin = async () => {
+  const handleSignup = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // TODO: Implement signin logic
-      
+      if(!formData.email || !formData.password){
+        return alert("All Fields Are Required")
+      }
+
+      const response = await axios.post("/api/v1/signup", formData);
+      if (response.data.success) {
+        setSuccess(response.data.message)
+        setTimeout(() => {
+          router.push("/auth/signin");
+        }, 2000);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred during sign in");
+      setError(err instanceof Error ? err?.response?.data?.message[0] : "An error occurred during signup");;
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +71,7 @@ const Signin = () => {
       >
         <div className="bg-white/10 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/20">
           <h1 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            Welcome Back
+            Create Account
           </h1>
 
           {error && (
@@ -58,6 +81,15 @@ const Signin = () => {
               className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6"
             >
               <p className="text-red-400 text-sm text-center">{error}</p>
+            </motion.div>
+          )}
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6"
+            >
+              <p className="text-green-400 text-sm text-center">{success}</p>
             </motion.div>
           )}
 
@@ -85,7 +117,7 @@ const Signin = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="w-full bg-white/5 border-white/10 text-white pr-10"
-                  placeholder="Enter your password"
+                  placeholder="Create a password"
                 />
                 <button
                   type="button"
@@ -95,23 +127,41 @@ const Signin = () => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+
+              <div className="mt-4 space-y-2">
+                {passwordRequirements.map((req, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-2 text-sm"
+                  >
+                    {req.regex.test(formData.password) ? (
+                      <Check size={14} className="text-green-400" />
+                    ) : (
+                      <X size={14} className="text-gray-400" />
+                    )}
+                    <span className={req.regex.test(formData.password) ? "text-green-400" : "text-gray-400"}>
+                      {req.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Button
-              onClick={handleSignin}
+              onClick={handleSignup}
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200"
             >
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "Creating Account..." : "Sign Up"}
             </Button>
 
             <p className="text-center text-gray-400 text-sm">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/signup"
+                href="/auth/signIn"
                 className="text-purple-400 hover:text-purple-300 transition-colors"
               >
-                Sign Up
+                Sign In
               </Link>
             </p>
           </div>
@@ -121,4 +171,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Signup;

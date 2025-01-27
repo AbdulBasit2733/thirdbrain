@@ -4,6 +4,7 @@ import { Button } from "@/app/components/ui/Button";
 import Link from "next/link";
 import { ArrowRight, BookMarked, Filter, Globe } from "lucide-react";
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 
 export default function Home() {
   return (
@@ -33,12 +34,12 @@ export default function Home() {
             ThirdBrain helps you keep everything at your fingertips.
           </p>
 
-          <Link href="/signin" className="inline-block mt-8">
-            <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <div className="inline-block mt-8">
+            <Button onClick={() => signIn()} className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
               Get Started
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-          </Link>
+          </div>
         </motion.div>
 
         <motion.div
