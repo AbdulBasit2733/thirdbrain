@@ -16,6 +16,12 @@ datasource db {
 
 model User {
   id        Int     @id @default(autoincrement())
+  image     String?
+  provider  Provider
+  name      String?
   email     String  @unique
-  password  String
+}
+
+enum Provider {
+  GOOGLE
 }

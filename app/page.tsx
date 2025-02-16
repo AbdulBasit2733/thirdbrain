@@ -6,7 +6,14 @@ import { ArrowRight, BookMarked, Filter, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const { status } = useSession();
+  const router = useRouter();
+  if (status === "authenticated") {
+    router.push("/user/dashboard");
+  }
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
       {/* Background decoration */}
@@ -35,7 +42,10 @@ export default function Home() {
           </p>
 
           <div className="inline-block mt-8">
-            <Button onClick={() => signIn()} className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <Button
+              onClick={() => signIn()}
+              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+            >
               Get Started
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>

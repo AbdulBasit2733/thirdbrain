@@ -1,10 +1,9 @@
-import Dashboard from '@/app/components/Dashboard'
 import React from 'react'
 
-const page = () => {
+const Dashboard = () => {
   return (
-    <Dashboard />
+    <div>Dashboard</div>
   )
 }
 
-export default page
+export default Dashboard
