@@ -26,9 +26,6 @@ const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log(user);
-      console.log(account);
-      console.log(profile);
       if (user.email) {
         try {
           // Check if user exists
