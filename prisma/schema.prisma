@@ -15,11 +15,34 @@ datasource db {
 
 
 model User {
-  id        Int     @id @default(autoincrement())
+  id        String     @id @default(uuid())
   image     String?
   provider  Provider
   name      String?
   email     String  @unique
+  contents  Content[]
+}
+
+model Content {
+  id          String        @id   @default(uuid())
+  url         String
+  type        ContentType
+  tags        String[]      @default([])
+  notes       String
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+}
+
+model Share {
+  id      String    @id     @default(uuid())
+  hash    String    @default("")    
+}
+
+enum ContentType {
+  YOUTUBE
+  TWITTER
+  DOC
+  IMAGE
 }
 
 enum Provider {

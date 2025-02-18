@@ -3,8 +3,8 @@
 import type React from "react";
 import { useState, useCallback, useRef } from "react";
 import { FileUpload } from "./FileUpload";
-import { YouTubeEmbed } from "./YoutubeEmbed";
-import { TwitterEmbed } from "./TwitterEmbed";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface AddContentProps {
   onClose: () => void;
@@ -15,7 +15,7 @@ interface ContentData {
   type: "youtube" | "twitter" | "doc" | "image";
   url?: string;
   file?: File;
-  tag: string[]; // FIXED: Changed from [string] to string[]
+  tags: string[]; // FIXED: Changed from [string] to string[]
   notes: string;
 }
 
@@ -85,10 +85,10 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
     setTags((prevTags) => prevTags.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const content: ContentData = {
       type: contentType,
-      tag: tags,
+      tags: tags,
       notes,
     };
 
@@ -97,9 +97,19 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
     } else {
       content.file = file || undefined;
     }
-    console.log(content);
+    const response = await axios.post("/api/v1/create-content", content, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true, // Ensures cookies are sent
+    });
 
-    onClose();
+    if (response.data.success) {
+      toast.success(response.data.message);
+      onClose();
+    } else {
+      toast.error(response.data.message);
+    }
   };
 
   return (
@@ -201,9 +211,6 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
               placeholder="Add any notes about this content..."
             />
           </div>
-
-          {contentType === "youtube" && url && <YouTubeEmbed url={url} />}
-          {contentType === "twitter" && url && <TwitterEmbed url={url} />}
 
           <div className="flex justify-end space-x-3">
             <button onClick={onClose} className="px-4 py-2 border rounded-md">

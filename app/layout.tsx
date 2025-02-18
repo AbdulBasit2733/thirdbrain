@@ -3,9 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
-import { SessionProvider } from "next-auth/react";
 import { NextAuthProvider } from "./NextAuthProvider";
-
+import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-900`}
       >
+        <Toaster position="top-center" />
         <NextAuthProvider>
           <Theme>{children}</Theme>
         </NextAuthProvider>
