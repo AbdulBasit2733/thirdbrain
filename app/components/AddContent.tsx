@@ -8,22 +8,21 @@ import toast from "react-hot-toast";
 
 interface AddContentProps {
   onClose: () => void;
-  onAddContent: (content: ContentData) => void;
 }
 
 interface ContentData {
-  type: "youtube" | "twitter" | "doc" | "image";
+  type:  "YOUTUBE" | "TWITTER" | "DOC" | "IMAGE";
   url?: string;
   file?: File;
   tags: string[]; // FIXED: Changed from [string] to string[]
   notes: string;
 }
 
-const contentTypes = ["youtube", "twitter", "doc", "image"] as const;
+const contentTypes = ["YOUTUBE", "TWITTER", "DOC", "IMAGE"] as const;
 
 export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
   const [contentType, setContentType] =
-    useState<ContentData["type"]>("youtube");
+    useState<ContentData["type"]>("YOUTUBE");
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
@@ -92,7 +91,7 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
       notes,
     };
 
-    if (contentType === "youtube" || contentType === "twitter") {
+    if (contentType === "YOUTUBE" || contentType === "TWITTER") {
       content.url = url;
     } else {
       content.file = file || undefined;
@@ -133,13 +132,13 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
             ))}
           </div>
 
-          {(contentType === "youtube" || contentType === "twitter") && (
+          {(contentType === "YOUTUBE" || contentType === "TWITTER") && (
             <div className="mb-4">
               <label
                 htmlFor="url"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                {contentType === "youtube" ? "YouTube URL" : "Twitter Post URL"}
+                {contentType === "YOUTUBE" ? "YouTube URL" : "Twitter Post URL"}
               </label>
               <input
                 type="text"
@@ -152,7 +151,7 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
             </div>
           )}
 
-          {(contentType === "doc" || contentType === "image") && (
+          {(contentType === "DOC" || contentType === "IMAGE") && (
             <FileUpload
               contentType={contentType}
               onFileChange={handleFileChange}
