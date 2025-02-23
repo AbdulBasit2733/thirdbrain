@@ -1,18 +1,65 @@
+"use client";
+import { AddContent } from "@/app/components/AddContent";
+import AddIcon from "@/app/components/Icons/AddIcon";
 import TwitterIcon from "@/app/components/Icons/TwitterIcon";
 import YoutubeIcon from "@/app/components/Icons/YoutubeIcon";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
-import { PlusCircle, Youtube } from "lucide-react";
-import React from "react";
+import { ApiResponse } from "@/app/types/types";
+import axios from "axios";
+import { File, Image, PlusCircle, Youtube } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [searchData, setSearchData] = useState();
+  const [showModal, setShowModal] = useState(false);
+
+  const [type, setType] = useState("ALL");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get<ApiResponse>("/api/v1/contents", {
+          withCredentials: true,
+        });
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!data || !data.success) {
+    return <p>Failed to load contents.</p>;
+  }
+  const filteredData =
+    type === "ALL" ? data.data : data.data.filter((cont) => cont.type === type);
+
+  const handleSearch = (e) => {
+    console.log(e.target.value);
+  };
+
   return (
     <main className="flex-1 p-8 overflow-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-semibold text-gray-800">Your Brain</h2>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Add New
+        <button
+          onClick={() => setShowModal(true)}
+          className="inline-flex items-center gap-2 py-3 px-5 bg-slate-900 text-slate-100 font-semibold text-sm rounded-md hover:bg-slate-800 transition-colors"
+        >
+          <AddIcon />
+          Add Content
         </button>
       </div>
 
@@ -20,17 +67,22 @@ const Dashboard = () => {
       <div className="flex space-x-4 mb-6">
         <div className="flex-1">
           <input
+            onChange={handleSearch}
             type="text"
             placeholder="Search your brain..."
             className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <select className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option>All Types</option>
-          <option>Twitter</option>
-          <option>YouTube</option>
-          <option>Documents</option>
-          <option>Images</option>
+        <select
+          defaultValue={type}
+          onChange={(e) => setType(e.target.value)}
+          className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value={"ALL"}>All Types</option>
+          <option value={"TWITTER"}>Twitter</option>
+          <option value={"YOUTUBE"}>YouTube</option>
+          <option value={"DOC"}>Documents</option>
+          <option value={"IMAGES"}>Images</option>
         </select>
       </div>
 
@@ -87,32 +139,38 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <tr key={item}>
+              {filteredData.map((item) => (
+                <tr key={item.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-x-2">
-                      <YoutubeIcon />
-                      <span className="text-sm text-gray-900">YouTube</span>
+                      {item.type === "YOUTUBE" && <YoutubeIcon />}
+                      {item.type === "TWITTER" && <TwitterIcon />}
+                      {item.type === "DOC" && <File />}
+                      {item.type === "IMAGE" && <Image />}
+                      <span className="text-sm text-gray-900">
+                        {item.type.charAt(0).toUpperCase() +
+                          item.type.slice(1).toLocaleLowerCase()}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      How to build a second brain
+                    <div className="text-sm text-gray-900 text-wrap">
+                      {item.title}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">2023-05-15</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <a
-                      href="#"
+                    <button
+                      onClick={() => {}}
                       className="text-indigo-600 hover:text-indigo-900 mr-3"
                     >
                       View
-                    </a>
-                    <a href="#" className="text-red-600 hover:text-red-900">
+                    </button>
+                    <button className="text-red-600 hover:text-red-900">
                       Delete
-                    </a>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -120,6 +178,7 @@ const Dashboard = () => {
           </table>
         </div>
       </div>
+      {showModal && <AddContent onClose={() => setShowModal(false)} />}
     </main>
   );
 };

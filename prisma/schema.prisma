@@ -26,6 +26,7 @@ model User {
 model Content {
   id          String        @id   @default(uuid())
   url         String
+  title       String
   type        ContentType
   tags        String[]      @default([])
   notes       String

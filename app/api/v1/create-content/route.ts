@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       console.log("Received Body Data:", bodyData);
   
       // Validate required fields
-      if (!bodyData || !bodyData.type || !bodyData.url || !bodyData.tags || !bodyData.notes) {
+      if (!bodyData || !bodyData.type || !bodyData.url || !bodyData.tags || !bodyData.notes || !bodyData.title) {
         return NextResponse.json(
           { success: false, message: "Missing required fields" },
           { status: 400 }
@@ -50,6 +50,7 @@ export async function POST(req: Request) {
       // Create Content
       const createdContent = await prisma.content.create({
         data: {
+          title:bodyData.title,
           userId: existingUser?.id,
           type: bodyData?.type?.toUpperCase() || "YOUTUBE",
           url: bodyData?.url || "",
