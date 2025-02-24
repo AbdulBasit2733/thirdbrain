@@ -1,45 +1,56 @@
-"use client"; // Ensure this runs in a client component
+"use client";
 
-import { useState, useEffect } from "react";
 import Card from "../components/ui/Card";
-import { fetchData } from "@/app/utils/config";
 import { ApiResponse, DataProps } from "../types/types";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-const AllContents = ({ type }: { type: "YOUTUBE" | "TWITTER" | "DOC" | "IMAGE" | "ALL" }) => {
-  const [data, setData] = useState<ApiResponse>();
+const AllContents = ({
+  type,
+}: {
+  type: "YOUTUBE" | "TWITTER" | "DOC" | "IMAGE" | "ALL";
+}) => {
+  const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       try {
-        const result = await fetchData();
-        setData(result);
+        const response = await axios.get<ApiResponse>("/api/v1/contents", {
+          withCredentials: true,
+        });
+        setData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-    
-    loadData();
+
+    fetchData();
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <div>Loading...</div>;
   }
 
-  if (!data || !data.success || !data.data) {
-    return <p>Failed to load contents.</p>;
+  if (!data || data.length === 0) {
+    return <div>No Content is Available</div>;
   }
 
   const filteredData =
-    type === "ALL" ? data.data : data.data.filter((content: DataProps) => content.type === type);
-  console.log(filteredData);
+    type === "ALL"
+      ? data
+      : data.filter((content: DataProps) => content.type === type);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
       {filteredData.length === 0 ? (
         <div>No Content is Available</div>
       ) : (
-        filteredData.map((item: DataProps) => <Card key={item.id} data={item} />)
+        filteredData.map((item: DataProps) => (
+          <Card key={item.id} data={item} />
+        ))
       )}
     </div>
   );

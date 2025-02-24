@@ -1,8 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useCallback, useRef } from "react";
-import { FileUpload } from "./FileUpload";
+import { useState, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -11,55 +10,33 @@ interface AddContentProps {
 }
 
 interface ContentData {
-  type: "YOUTUBE" | "TWITTER" | "DOC" | "IMAGE";
+  type: "YOUTUBE" | "TWITTER";
   url?: string;
   title: string;
-  file?: File;
-  tags: string[]; // FIXED: Changed from [string] to string[]
+  tags: string[];
   notes: string;
 }
 
-const contentTypes = ["YOUTUBE", "TWITTER", "DOC", "IMAGE"] as const;
+const contentTypes = ["YOUTUBE", "TWITTER"] as const;
 
 export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
   const [contentType, setContentType] =
     useState<ContentData["type"]>("YOUTUBE");
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
-  const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [inputTagValue, setInputTagValue] = useState("");
-  const [preview, setPreview] = useState<string | null>(null);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleContentTypeChange = useCallback((type: ContentData["type"]) => {
     setContentType(type);
     setUrl("");
     setTitle("");
-    setFile(null);
-    setPreview(null);
   }, []);
 
   const handleUrlChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setUrl(e.target.value);
-    },
-    []
-  );
-
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.target.files?.[0];
-      if (selectedFile) {
-        setFile(selectedFile);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreview(reader.result as string);
-        };
-        reader.readAsDataURL(selectedFile);
-      }
     },
     []
   );
@@ -93,13 +70,9 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
       type: contentType,
       tags: tags,
       notes,
+      url: url
     };
 
-    if (contentType === "YOUTUBE" || contentType === "TWITTER") {
-      content.url = url;
-    } else {
-      content.file = file || undefined;
-    }
     const response = await axios.post("/api/v1/create-content", content, {
       headers: {
         "Content-Type": "application/json",
@@ -110,6 +83,7 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
     if (response.data.success) {
       toast.success(response.data.message);
       onClose();
+      window.location.reload(); // Reload the page after successful submission
     } else {
       toast.error(response.data.message);
     }
@@ -136,55 +110,42 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
             ))}
           </div>
 
-          {(contentType === "YOUTUBE" || contentType === "TWITTER") && (
-            <>
-              <div className="mb-4">
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  {contentType === "YOUTUBE"
-                    ? "YouTube Video Title"
-                    : "Twitter Post Title"}
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={`Enter ${contentType} Title...`}
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="url"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  {contentType === "YOUTUBE"
-                    ? "YouTube URL"
-                    : "Twitter Post URL"}
-                </label>
-                <input
-                  type="text"
-                  id="url"
-                  value={url}
-                  onChange={handleUrlChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={`Enter ${contentType} URL...`}
-                />
-              </div>
-            </>
-          )}
-
-          {(contentType === "DOC" || contentType === "IMAGE") && (
-            <FileUpload
-              contentType={contentType}
-              onFileChange={handleFileChange}
-              preview={preview}
-              fileInputRef={fileInputRef}
+          <div className="mb-4">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {contentType === "YOUTUBE"
+                ? "YouTube Video Title"
+                : "Twitter Post Title"}
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={`Enter ${contentType} Title...`}
             />
-          )}
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="url"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {contentType === "YOUTUBE"
+                ? "YouTube URL"
+                : "Twitter Post URL"}
+            </label>
+            <input
+              type="text"
+              id="url"
+              value={url}
+              onChange={handleUrlChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={`Enter ${contentType} URL...`}
+            />
+          </div>
 
           <div className="mb-4">
             <label
@@ -197,8 +158,8 @@ export const AddContent: React.FC<AddContentProps> = ({ onClose }) => {
               type="text"
               id="tag"
               value={inputTagValue}
-              onChange={handleInputChange} // FIXED: Changed from `handleTagChange`
-              onKeyDown={handleKeyDown} // FIXED: Added `onKeyDown` event
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter Tags and press Enter"
             />

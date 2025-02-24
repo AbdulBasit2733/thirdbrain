@@ -5,9 +5,7 @@ import React, { ReactElement } from "react";
 import DashboardIcon from "../Icons/DashboardIcon";
 import YoutubeIcon from "../Icons/YoutubeIcon";
 import TwitterIcon from "../Icons/TwitterIcon";
-import DocIcon from "../Icons/DocIcon";
-import ImageIcon from "../Icons/ImageIcon";
-import SettingsIcon from "../Icons/SettingsIcon";
+// import SettingsIcon from "../Icons/SettingsIcon";
 
 const Sidebar = () => {
   return (
@@ -20,11 +18,11 @@ const Sidebar = () => {
           <SidebarItems name="Dashboard" link="/user/dashboard" icon={<DashboardIcon />} />
           <SidebarItems name="Youtube" link="/user/youtube" icon={<YoutubeIcon />} />
           <SidebarItems name="Twitter" link="/user/twitter" icon={<TwitterIcon />} />
-          <SidebarItems name="File" link="/user/file" icon={<DocIcon />} />
-          <SidebarItems name="Image" link="/user/image" icon={<ImageIcon />} />
+          {/* <SidebarItems name="File" link="/user/file" icon={<DocIcon />} />
+          <SidebarItems name="Image" link="/user/image" icon={<ImageIcon />} /> */}
         </div>
         <div className="flex flex-col gap-5">
-          <SidebarItems name="Settings" link="/user/settings" icon={<SettingsIcon />} />
+          {/* <SidebarItems name="Settings" link="/user/settings" icon={<SettingsIcon />} /> */}
           <Link href={"https://x.com/Abdul_2003_"} target="_blank">
             <p className="text-xs font-extrabold pl-2">@ Abdul Basit Khan</p>
           </Link>

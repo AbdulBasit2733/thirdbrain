@@ -5,37 +5,33 @@ import TwitterIcon from "@/app/components/Icons/TwitterIcon";
 import YoutubeIcon from "@/app/components/Icons/YoutubeIcon";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
-import { ApiResponse } from "@/app/types/types";
+import { ApiResponse, Content } from "@/app/types/types";
+import { fetchData } from "@/app/utils/config";
 import axios from "axios";
 import { File, Image, PlusCircle, Youtube } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchData, setSearchData] = useState();
+  const [searchData, setSearchData] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
-
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [type, setType] = useState("ALL");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
       try {
-        const response = await axios.get<ApiResponse>("/api/v1/contents", {
-          withCredentials: true,
-        });
-        setData(response.data);
+        const response = await fetchData();
+        setData(response);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setData(null);
-      } finally {
+        console.error("Failed to fetch data:", error);
         setLoading(false);
       }
     };
-
-    fetchData();
+    loadData();
   }, []);
-
+  
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -43,11 +39,12 @@ const Dashboard = () => {
   if (!data || !data.success) {
     return <p>Failed to load contents.</p>;
   }
-  const filteredData =
-    type === "ALL" ? data.data : data.data.filter((cont) => cont.type === type);
 
-  const handleSearch = (e) => {
-    console.log(e.target.value);
+  const filteredData =
+    type === "ALL" ? data.data : data.data.filter((cont: Content) => cont.type === type);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchData(e.target.value);
   };
 
   return (
@@ -74,15 +71,15 @@ const Dashboard = () => {
           />
         </div>
         <select
-          defaultValue={type}
+          value={type}
           onChange={(e) => setType(e.target.value)}
           className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value={"ALL"}>All Types</option>
-          <option value={"TWITTER"}>Twitter</option>
-          <option value={"YOUTUBE"}>YouTube</option>
-          <option value={"DOC"}>Documents</option>
-          <option value={"IMAGES"}>Images</option>
+          <option value="ALL">All Types</option>
+          <option value="TWITTER">Twitter</option>
+          <option value="YOUTUBE">YouTube</option>
+          <option value="DOC">Documents</option>
+          <option value="IMAGES">Images</option>
         </select>
       </div>
 
@@ -139,7 +136,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredData.map((item) => (
+              {filteredData.map((item: Content) => (
                 <tr key={item.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-x-2">
@@ -149,7 +146,7 @@ const Dashboard = () => {
                       {item.type === "IMAGE" && <Image />}
                       <span className="text-sm text-gray-900">
                         {item.type.charAt(0).toUpperCase() +
-                          item.type.slice(1).toLocaleLowerCase()}
+                          item.type.slice(1).toLowerCase()}
                       </span>
                     </div>
                   </td>

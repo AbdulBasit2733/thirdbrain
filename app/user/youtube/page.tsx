@@ -2,12 +2,10 @@
 import { AddContent } from "@/app/components/AddContent";
 import AddIcon from "@/app/components/Icons/AddIcon";
 import AllContents from "@/app/ServerComponents/AllContents";
-
 import { useState } from "react";
 
 const YoutubePage = () => {
   const [showModal, setShowModal] = useState(false);
-
   return (
     <div className="w-full min-h-screen p-4 relative">
       <div className="w-full flex justify-end mb-4">

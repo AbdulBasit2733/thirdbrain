@@ -13,6 +13,18 @@ export const prisma = global.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 
+export function RandomHash(len: number) {
+  let options =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let ans = "";
+  let length = options.length;
+
+  for (let i = 0; i < len; i++) {
+    ans += options[Math.floor(Math.random() * length)];
+  }
+  return ans;
+}
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -77,6 +89,5 @@ export const fetchData = async () => {
     withCredentials: true,
   });
 
-  
   return response.data;
 };

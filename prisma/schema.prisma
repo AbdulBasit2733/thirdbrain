@@ -21,6 +21,7 @@ model User {
   name      String?
   email     String  @unique
   contents  Content[]
+  shares    Share[]
 }
 
 model Content {
@@ -36,7 +37,9 @@ model Content {
 
 model Share {
   id      String    @id     @default(uuid())
-  hash    String    @default("")    
+  hash    String    @unique
+  userId  String
+  user    User      @relation(fields: [userId], references: [id])
 }
 
 enum ContentType {
